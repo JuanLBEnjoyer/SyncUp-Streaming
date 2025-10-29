@@ -2,6 +2,7 @@ package com.myapp.model;
 
 import java.util.LinkedList;
 import java.util.Objects;
+import com.myapp.model.enums.Role;  
 
 public class Usuario {
 
@@ -9,9 +10,11 @@ public class Usuario {
     private String password;
     private String nombre;
     private LinkedList<Cancion> cancionesFavoritas;
+    private Role role;
 
     public Usuario() {
         this.cancionesFavoritas = new LinkedList<>();
+        this.role = Role.USER;
     }
 
     public Usuario(String user, String password, String nombre) {
@@ -19,6 +22,7 @@ public class Usuario {
         this.password = password;
         this.nombre = nombre;
         this.cancionesFavoritas = new LinkedList<>();
+        this.role = Role.USER;
     }
 
     public String getUser() {
@@ -43,6 +47,10 @@ public class Usuario {
 
     public void setNombre(String nombre) {
         this.nombre = nombre;
+    }
+
+    public Role getRole() {
+        return role;
     }
 
     public LinkedList<Cancion> getCancionesFavoritas() {

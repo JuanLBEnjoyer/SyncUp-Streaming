@@ -2,6 +2,8 @@ package com.myapp.model;
 
 import java.util.Objects;
 
+import com.myapp.model.enums.Genero;
+
 public class Cancion {
     private Long id;
     private String titulo;
