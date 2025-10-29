@@ -1,5 +1,7 @@
 package com.myapp.model;
 
+import java.util.Objects;
+
 public class Cancion {
     private Long id;
     private String titulo;
@@ -76,6 +78,19 @@ public class Cancion {
                 ", año=" + año +
                 ", duracion=" + duracion +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Cancion cancion = (Cancion) o;
+        return Objects.equals(id, cancion.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 
 }
