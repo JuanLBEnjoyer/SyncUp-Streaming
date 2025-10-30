@@ -17,12 +17,12 @@ public class Usuario {
         this.role = Role.USER;
     }
 
-    public Usuario(String user, String password, String nombre) {
+    public Usuario(String user, String password, String nombre, Role role) {
         this.user = user;
         this.password = password;
         this.nombre = nombre;
         this.cancionesFavoritas = new LinkedList<>();
-        this.role = Role.USER;
+        this.role = role;
     }
 
     public String getUser() {
