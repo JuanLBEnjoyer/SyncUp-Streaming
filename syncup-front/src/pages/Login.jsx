@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import API from "../services/api";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+
 
 export default function Login({ setUser }) {
   const [form, setForm] = useState({ user: "", password: "" });
   const nav = useNavigate();
+  const [errors, setErrors] = useState({});
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -15,7 +17,13 @@ export default function Login({ setUser }) {
       alert("Inicio de sesión exitoso");
       nav("/");
     } catch (err) {
-      alert(err.response?.data || "Usuario o contraseña incorrectos");
+      const erorrs = err.response?.data?.errors;
+      if(erorrs){
+        setErrors(erorrs)
+      }
+      else{
+        alert(err.response?.data || "Error al iniciar sesión");
+      }
     }
   };
 
@@ -28,6 +36,10 @@ export default function Login({ setUser }) {
           value={form.user}
           onChange={(e) => setForm({ ...form, user: e.target.value })}
         />
+        {errors?.user && 
+        <div 
+          style={{ color: "red" }}>{errors.user}
+        </div> }
         <br />
         <input
           type="password"
@@ -35,9 +47,17 @@ export default function Login({ setUser }) {
           value={form.password}
           onChange={(e) => setForm({ ...form, password: e.target.value })}
         />
+        {errors?.password && 
+        <div 
+          style={{ color: "red" }}>{errors.password}
+        </div> }
         <br />
         <button type="submit">Ingresar</button>
       </form>
+      <p>
+        ¿No tienes cuenta? {" "}
+        <Link to="/register">Regístrate aqui</Link>
+      </p>
     </div>
   );
 }

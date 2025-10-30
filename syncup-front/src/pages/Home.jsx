@@ -9,7 +9,7 @@ export default function Home({ user }) {
     if (!user) nav("/register"); 
   }, [user, nav]);
 
-  if (!user) return null; 
+  if (!user) return <div>Redirigiendo...</div>;
 
   return (
     <div style={{ padding: "2rem" }}>
@@ -19,7 +19,7 @@ export default function Home({ user }) {
       <button
         onClick={() => {
           localStorage.removeItem("user");
-          window.location.reload(); // recarga la app y borra sesión
+          window.location.reload();
         }}
       >
         Cerrar sesión
