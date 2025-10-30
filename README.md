@@ -5,4 +5,5 @@ Repositorio para trabajar proyecto de estructura de datos
 - Samuel Saith Calle Santa
 - Juan David Castañeda Valenzuela
 ## Descripcion
+## Funcionalidades
 ## Herramientas
