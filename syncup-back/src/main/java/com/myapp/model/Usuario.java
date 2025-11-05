@@ -1,7 +1,8 @@
 package com.myapp.model;
 
-import java.util.LinkedList;
 import java.util.Objects;
+
+import com.myapp.ClasesPropias.ListaEnlazada.ListaEnlazada;
 import com.myapp.model.enums.Role;  
 
 public class Usuario {
@@ -9,11 +10,11 @@ public class Usuario {
     private String user;
     private String password;
     private String nombre;
-    private LinkedList<Cancion> cancionesFavoritas;
+    private ListaEnlazada<Cancion> cancionesFavoritas;
     private Role role;
 
     public Usuario() {
-        this.cancionesFavoritas = new LinkedList<>();
+        this.cancionesFavoritas = new ListaEnlazada<>();
         this.role = Role.USER;
     }
 
@@ -21,7 +22,7 @@ public class Usuario {
         this.user = user;
         this.password = password;
         this.nombre = nombre;
-        this.cancionesFavoritas = new LinkedList<>();
+        this.cancionesFavoritas = new ListaEnlazada<>();
         this.role = role;
     }
 
@@ -53,20 +54,20 @@ public class Usuario {
         return role;
     }
 
-    public LinkedList<Cancion> getCancionesFavoritas() {
+    public ListaEnlazada<Cancion> getCancionesFavoritas() {
         return cancionesFavoritas;
     }
 
-    public void setCancionesFavoritas(LinkedList<Cancion> cancionesFavoritas) {
+    public void setCancionesFavoritas(ListaEnlazada<Cancion> cancionesFavoritas) {
         this.cancionesFavoritas = cancionesFavoritas;
     }
 
     public void addCancionFavorita(Cancion cancion) {
-        cancionesFavoritas.add(cancion);
+        cancionesFavoritas.agregar(cancion);
     }
 
     public void removeCancionFavorita(Cancion cancion) {
-        cancionesFavoritas.remove(cancion);
+        cancionesFavoritas.eliminar(cancion);
     }
 
     @Override
