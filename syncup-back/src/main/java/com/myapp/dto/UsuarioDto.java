@@ -15,21 +15,15 @@ public class UsuarioDto {
         this.role = role;
     }
 
-    public String getUser(){ 
-        return user; }
+    public String getUser(){return user; }
 
-    public void setUser(String user) { 
-        this.user = user; }
+    public void setUser(String user) {this.user = user; }
         
-    public String getNombre() { 
-        return nombre; }
+    public String getNombre() {return nombre; }
 
-    public void setNombre(String nombre){ 
-    this.nombre = nombre; }
+    public void setNombre(String nombre){this.nombre = nombre; }
 
-    public Role getRole() { 
-        return role; }
+    public Role getRole() {return role; }
 
-    public void setRole(Role role) { 
-        this.role = role; }
+    public void setRole(Role role) {this.role = role; }
 }

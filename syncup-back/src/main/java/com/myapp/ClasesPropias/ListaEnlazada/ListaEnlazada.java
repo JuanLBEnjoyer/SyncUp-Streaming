@@ -1,6 +1,8 @@
 package com.myapp.ClasesPropias.ListaEnlazada;
 import java.util.NoSuchElementException;
 
+import com.myapp.ClasesPropias.Iterador.IteradorPropio;
+
 public class ListaEnlazada<T> {
 
     private Nodo<T> inicio;
@@ -108,5 +110,9 @@ public class ListaEnlazada<T> {
     public T ultimo() {
         if (estaVacia()) throw new NoSuchElementException("La lista está vacía");
         return fin.getDato();
+    }
+
+    public IteradorPropio<T> iterador() {
+        return new IteradorLista<T>(inicio);
     }
 }

@@ -10,7 +10,7 @@ public class Cancion {
     private String artista;
     private  Genero genero;
     private int año;
-    private int duracion; 
+    private double duracion; 
 
     public Cancion() {}
 
@@ -63,11 +63,11 @@ public class Cancion {
         this.año = año;
     }
 
-    public int getDuracion() {
+    public double getDuracion() {
         return duracion;
     }
 
-    public void setDuracion(int duracion) {
+    public void setDuracion(double duracion) {
         this.duracion = duracion;
     }
 

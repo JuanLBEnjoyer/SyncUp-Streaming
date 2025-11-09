@@ -5,16 +5,21 @@ import com.myapp.ClasesPropias.Map.MapSimple;
 import com.myapp.dto.UsuarioDto;
 import com.myapp.model.Usuario;
 import com.myapp.model.enums.Role;
-
+import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Service;
 
 @Service
 public class UsuarioService {
 
     private final MapSimple<String, Usuario> usuarios = new HashMapSimple<>();
+    private final GrafoSocialService grafoSocialService;
 
-    public UsuarioService() {
-        // Usuario admin por defecto
+    public UsuarioService(GrafoSocialService grafoSocialService) {
+        this.grafoSocialService = grafoSocialService;
+    }
+
+    @PostConstruct
+    void seed() {
         Usuario admin = new Usuario("admin", "admin123", "Administrador", Role.ADMIN);
         usuarios.put(admin.getUser(), admin);
     }
@@ -25,6 +30,7 @@ public class UsuarioService {
         }
         Usuario nuevoUsuario = new Usuario(user, password, nombre, Role.USER);
         usuarios.put(user, nuevoUsuario);
+        grafoSocialService.registrarUsuarioEnGrafo(user);
         return nuevoUsuario;
     }
 
