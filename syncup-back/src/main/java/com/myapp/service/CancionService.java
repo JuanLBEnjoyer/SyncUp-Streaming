@@ -31,6 +31,7 @@ public class CancionService {
         c.setDuracion(duracion);
 
         grafoService.registrarCancion(c);
+        trieService.registrarTitulo(titulo);
         return c;
     }
 
@@ -50,6 +51,7 @@ public class CancionService {
             throw new IllegalArgumentException("La canción no existe");
         }
         grafoService.registrarCancion(c); // actúa como reemplazo de metadata
+        trieService.registrarTitulo(c.getTitulo());
         return c;
     }
 
@@ -79,12 +81,77 @@ public class CancionService {
         return grafoService.caminoMasSimilar(origen, destino);
     }
 
-     public ListaEnlazada<String> sugerirTitulos(String prefijo, int limite) {
+    public ListaEnlazada<String> sugerirTitulos(String prefijo, int limite) {
         return trieService.sugerir(prefijo, limite);
     }
 
     public ListaEnlazada<String> sugerirTitulos(String prefijo) {
         return trieService.sugerir(prefijo);
+    }
+
+    public ListaEnlazada<Cancion> buscar(String artista,
+                                         Genero genero,
+                                         Integer anio,
+                                         boolean usarAnd) {
+
+        // Normalizar filtros
+        String filtroArtista = (artista == null) ? null : artista.trim().toLowerCase();
+        Genero filtroGenero = genero;
+        Integer filtroAnio = anio;
+
+        boolean hayFiltroArtista = (filtroArtista != null && !filtroArtista.isBlank());
+        boolean hayFiltroGenero  = (filtroGenero != null);
+        boolean hayFiltroAnio    = (filtroAnio != null);
+
+        // Si no hay ningún filtro, devolvemos todas las canciones
+        if (!hayFiltroArtista && !hayFiltroGenero && !hayFiltroAnio) {
+            return listarTodas();
+        }
+
+        ListaEnlazada<Cancion> todas = listarTodas();
+        ListaEnlazada<Cancion> resultado = new ListaEnlazada<>();
+
+        for (int i = 0; i < todas.tamaño(); i++) {
+            Cancion c = todas.obtener(i);
+
+            boolean coincideArtista = true;
+            boolean coincideGenero  = true;
+            boolean coincideAnio    = true;
+
+            if (hayFiltroArtista) {
+                String artistaCancion = (c.getArtista() == null) ? "" : c.getArtista().toLowerCase();
+                // puedes usar contains o equalsIgnoreCase según lo que quieras
+                coincideArtista = artistaCancion.contains(filtroArtista);
+            }
+
+            if (hayFiltroGenero) {
+                coincideGenero = (c.getGenero() == filtroGenero);
+            }
+
+            if (hayFiltroAnio) {
+                coincideAnio = (c.getAño() == filtroAnio.intValue());
+            }
+
+            boolean coincide;
+            if (usarAnd) {
+                // AND: debe cumplir todos los filtros que existan
+                coincide = true;
+                if (hayFiltroArtista) coincide &= coincideArtista;
+                if (hayFiltroGenero)  coincide &= coincideGenero;
+                if (hayFiltroAnio)    coincide &= coincideAnio;
+            } else {
+                // OR: basta que cumpla al menos uno de los filtros presentes
+                coincide = false;
+                if (hayFiltroArtista) coincide |= coincideArtista;
+                if (hayFiltroGenero)  coincide |= coincideGenero;
+                if (hayFiltroAnio)    coincide |= coincideAnio;
+            }
+
+            if (coincide) {
+                resultado.agregar(c);
+            }
+        }
+        return resultado;
     }
 }
 

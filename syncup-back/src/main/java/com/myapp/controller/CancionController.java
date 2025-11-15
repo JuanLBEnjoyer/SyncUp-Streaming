@@ -4,10 +4,10 @@ import com.myapp.dto.CancionCreateDto;
 import com.myapp.dto.CancionDto;
 import com.myapp.dto.SimilitudDto;
 import com.myapp.service.CancionService;
+import com.myapp.service.RadioService;
 import com.myapp.ClasesPropias.ListaEnlazada.ListaEnlazada;
-import com.myapp.ClasesPropias.Set.SetPropio;
-import com.myapp.ClasesPropias.Iterador.IteradorPropio;
 import com.myapp.model.Cancion;
+import com.myapp.model.enums.Genero;
 
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -26,9 +26,11 @@ import java.util.Map;
 public class CancionController {
 
     private final CancionService cancionService;
+    private final RadioService radioService;
 
-    public CancionController(CancionService cancionService) {
+    public CancionController(CancionService cancionService, RadioService radioService) {
         this.cancionService = cancionService;
+        this.radioService = radioService;
     }
 
     // --------- CREAR CANCIÓN ---------
@@ -124,43 +126,70 @@ public class CancionController {
         }
     }
 
-    // --------- OBTENER CANCIONES SIMILARES A UNA ---------
+    @GetMapping("/autocompletar")
+    public ResponseEntity<?> autocompletar(
+        @RequestParam String prefijo,
+        @RequestParam(name = "limite", required = false, defaultValue = "10") int limite) {
 
-    @GetMapping("/{id}/similares")
-    public ResponseEntity<?> obtenerSimilares(@PathVariable Long id) {
+    ListaEnlazada<String> sugerencias = cancionService.sugerirTitulos(prefijo, limite);
+    List<String> respuesta = new ArrayList<>();
+
+    for (int i = 0; i < sugerencias.tamaño(); i++) {
+        respuesta.add(sugerencias.obtener(i));
+    }
+
+    return ResponseEntity.ok(respuesta);
+}
+
+    @GetMapping("/buscar")
+    public ResponseEntity<?> buscar(
+        @RequestParam(name = "artista", required = false) String artista,
+        @RequestParam(name = "genero", required = false) String generoStr,
+        @RequestParam(name = "año", required = false) Integer año,
+        @RequestParam(name = "modo", required = false, defaultValue = "AND") String modo) {
+
+    // Parsear género (puede venir null)
+    Genero genero = null;
+    if (generoStr != null && !generoStr.isBlank()) {
         try {
-            SetPropio<Cancion> similares = cancionService.similares(id);
-            List<CancionDto> respuesta = new ArrayList<>();
-
-            IteradorPropio<Cancion> it = similares.iterador();
-            while (it.tieneSiguiente()) {
-                respuesta.add(new CancionDto(it.siguiente()));
-            }
-
-            return ResponseEntity.ok(respuesta);
+            genero = Genero.valueOf(generoStr.toUpperCase());
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
+            return ResponseEntity.badRequest().body(
+                Map.of("message", "Género inválido: " + generoStr)
+            );
         }
     }
 
-    // --------- OBTENER RUTA MÁS SIMILAR ENTRE DOS CANCIONES ---------
+    boolean usarAnd = !"OR".equalsIgnoreCase(modo);
 
-    @GetMapping("/ruta/{origen}/{destino}")
-    public ResponseEntity<?> rutaMasSimilar(@PathVariable Long origen,
-                                            @PathVariable Long destino) {
-        try {
-            ListaEnlazada<Cancion> ruta = cancionService.caminoMasSimilar(origen, destino);
-            List<CancionDto> respuesta = new ArrayList<>();
+    var lista = cancionService.buscar(artista, genero, año, usarAnd);
 
-            for (int i = 0; i < ruta.tamaño(); i++) {
-                respuesta.add(new CancionDto(ruta.obtener(i)));
-            }
-
-            return ResponseEntity.ok(respuesta);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
-        }
+    List<CancionDto> respuesta = new ArrayList<>();
+    for (int i = 0; i < lista.tamaño(); i++) {
+        respuesta.add(new CancionDto(lista.obtener(i)));
     }
+
+    return ResponseEntity.ok(respuesta);
+}
+
+@GetMapping("/{id}/radio")
+public ResponseEntity<?> generarRadio(
+        @PathVariable Long id,
+        @RequestParam(name = "max", required = false, defaultValue = "20") int max) {
+    try {
+        ListaEnlazada<Cancion> lista = radioService.generarRadio(id, max);
+        List<CancionDto> respuesta = new ArrayList<>();
+
+        for (int i = 0; i < lista.tamaño(); i++) {
+            respuesta.add(new CancionDto(lista.obtener(i)));
+        }
+
+        return ResponseEntity.ok(respuesta);
+    } catch (IllegalArgumentException e) {
+        return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
+    }
+}
+
 
     // --------- MANEJO DE VALIDACIONES (@Valid) ---------
 
@@ -178,20 +207,7 @@ public class CancionController {
         ));
     }
 
-    @GetMapping("/autocompletar")
-    public ResponseEntity<?> autocompletar(
-        @RequestParam String prefijo,
-        @RequestParam(name = "limite", required = false, defaultValue = "10") int limite) {
-
-    ListaEnlazada<String> sugerencias = cancionService.sugerirTitulos(prefijo, limite);
-    List<String> respuesta = new ArrayList<>();
-
-    for (int i = 0; i < sugerencias.tamaño(); i++) {
-        respuesta.add(sugerencias.obtener(i));
-    }
-
-    return ResponseEntity.ok(respuesta);
-}
+    
 
 }
 

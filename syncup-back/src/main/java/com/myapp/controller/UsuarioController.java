@@ -3,6 +3,7 @@ package com.myapp.controller;
 import com.myapp.dto.UsuarioDto;
 import com.myapp.dto.UsuarioPerfilDto;
 import com.myapp.dto.CancionDto;
+import com.myapp.service.RecomendacionService;
 import com.myapp.service.UsuarioService;
 import com.myapp.ClasesPropias.ListaEnlazada.ListaEnlazada;
 import com.myapp.model.Usuario;
@@ -25,9 +26,11 @@ import java.util.Map;
 public class UsuarioController {
 
     private final UsuarioService usuarioService;
+    private final RecomendacionService recomendacionService;
 
-    public UsuarioController(UsuarioService usuarioService) {
+    public UsuarioController(UsuarioService usuarioService, RecomendacionService recomendacionService) {
         this.usuarioService = usuarioService;
+        this.recomendacionService = recomendacionService;
     }
 
     // ---------- OBTENER PERFIL ----------
@@ -99,6 +102,26 @@ public class UsuarioController {
             return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
         }
     }
+
+    @GetMapping("/{user}/descubrimiento-semanal")
+public ResponseEntity<?> descubrimientoSemanal(
+        @PathVariable String user,
+        @RequestParam(name = "max", required = false, defaultValue = "20") int max) {
+
+    try {
+        var lista = recomendacionService.generarDescubrimientoSemanal(user, max);
+
+        List<CancionDto> respuesta = new ArrayList<>();
+        for (int i = 0; i < lista.tamaño(); i++) {
+            respuesta.add(new CancionDto(lista.obtener(i)));
+        }
+
+        return ResponseEntity.ok(respuesta);
+    } catch (IllegalArgumentException e) {
+        return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
+    }
+}
+
 
     // ---------- MANEJO DE ERRORES DE VALIDACIÓN ----------
 
