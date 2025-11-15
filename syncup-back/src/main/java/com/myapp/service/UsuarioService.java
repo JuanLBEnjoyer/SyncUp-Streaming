@@ -1,8 +1,10 @@
 package com.myapp.service;
 
+import com.myapp.ClasesPropias.ListaEnlazada.ListaEnlazada;
 import com.myapp.ClasesPropias.Map.HashMapSimple;
 import com.myapp.ClasesPropias.Map.MapSimple;
 import com.myapp.dto.UsuarioDto;
+import com.myapp.model.Cancion;
 import com.myapp.model.Usuario;
 import com.myapp.model.enums.Role;
 import jakarta.annotation.PostConstruct;
@@ -13,9 +15,12 @@ public class UsuarioService {
 
     private final MapSimple<String, Usuario> usuarios = new HashMapSimple<>();
     private final GrafoSocialService grafoSocialService;
+    private final CancionService cancionService;
 
-    public UsuarioService(GrafoSocialService grafoSocialService) {
+
+    public UsuarioService(GrafoSocialService grafoSocialService, CancionService cancionService) {
         this.grafoSocialService = grafoSocialService;
+        this.cancionService = cancionService;
     }
 
     @PostConstruct
@@ -45,8 +50,64 @@ public class UsuarioService {
         return usuario;
     }
 
+    public Usuario actualizarPerfil(String user, String nuevoNombre, String nuevaPassword) {
+        Usuario u = usuarios.get(user);
+
+        if (u == null) {
+            throw new IllegalArgumentException("Usuario no encontrado");
+        }
+
+        if (nuevoNombre != null) {
+            u.setNombre(nuevoNombre);
+        }
+
+        if (nuevaPassword != null) {
+            u.setPassword(nuevaPassword);
+        }
+        
+        return u;
+    }   
+
     public Usuario obtenerUsuario(String user) {
         return usuarios.get(user);
+    }
+
+    public void agregarFavorito(String user, Long idCancion) {
+        Usuario u = usuarios.get(user);
+        if (u == null) {
+            throw new IllegalArgumentException("Usuario no encontrado");
+        }
+
+        Cancion c = cancionService.obtener(idCancion);
+        if (c == null) {
+            throw new IllegalArgumentException("Canción no encontrada");
+        }
+
+        if (!u.getCancionesFavoritas().contiene(c)) {
+            u.addCancionFavorita(c);
+        }
+    }
+
+    public void eliminarFavorito(String user, Long idCancion) {
+        Usuario u = usuarios.get(user);
+        if (u == null) {
+            throw new IllegalArgumentException("Usuario no encontrado");
+        }
+
+        Cancion c = cancionService.obtener(idCancion);
+        if (c == null) {
+            throw new IllegalArgumentException("Canción no encontrada");
+        }
+
+        u.removeCancionFavorita(c);
+    }
+
+    public ListaEnlazada<Cancion> obtenerFavoritos(String user) {
+        Usuario u = usuarios.get(user);
+        if (u == null) {
+            throw new IllegalArgumentException("Usuario no encontrado");
+        }
+        return u.getCancionesFavoritas();
     }
 
     public UsuarioDto toDto(Usuario usuario) {

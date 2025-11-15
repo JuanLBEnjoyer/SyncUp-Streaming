@@ -1,5 +1,6 @@
 package com.myapp.dto;
 
+import com.myapp.model.Cancion;
 import com.myapp.model.enums.Genero;
 
 public class CancionDto {
@@ -8,18 +9,18 @@ public class CancionDto {
     private String titulo;
     private String artista;
     private Genero genero;
-    private int anio;
+    private int año;
     private double duracion;
 
     public CancionDto() {}
 
-    public CancionDto(Long id, String titulo, String artista, Genero genero, int anio, double duracion) {
-        this.id = id;
-        this.titulo = titulo;
-        this.artista = artista;
-        this.genero = genero;
-        this.anio = anio;
-        this.duracion = duracion;
+    public CancionDto(Cancion c) {
+        this.id = c.getId();
+        this.titulo = c.getTitulo();
+        this.artista = c.getArtista();
+        this.genero = c.getGenero();
+        this.año = c.getAño();       
+        this.duracion = c.getDuracion();
     }
 
     public Long getId() { return id; }
@@ -34,8 +35,8 @@ public class CancionDto {
     public Genero getGenero() { return genero; }
     public void setGenero(Genero genero) { this.genero = genero; }
 
-    public int getAnio() { return anio; }
-    public void setAnio(int anio) { this.anio = anio; }
+    public int getAnio() { return año; }
+    public void setAnio(int año) { this.año = año; }
 
     public double getDuracion() { return duracion; }
     public void setDuracion(double duracion) { this.duracion = duracion; }
