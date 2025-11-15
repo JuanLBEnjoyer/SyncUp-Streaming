@@ -141,14 +141,13 @@ public class CancionController {
     return ResponseEntity.ok(respuesta);
 }
 
-    @GetMapping("/buscar")
-    public ResponseEntity<?> buscar(
-        @RequestParam(name = "artista", required = false) String artista,
-        @RequestParam(name = "genero", required = false) String generoStr,
-        @RequestParam(name = "año", required = false) Integer año,
-        @RequestParam(name = "modo", required = false, defaultValue = "AND") String modo) {
+@GetMapping("/buscar")
+public ResponseEntity<?> buscar(
+    @RequestParam(name = "artista", required = false) String artista,
+    @RequestParam(name = "genero", required = false) String generoStr,
+    @RequestParam(name = "año", required = false) Integer año,
+    @RequestParam(name = "modo", required = false, defaultValue = "AND") String modo) {
 
-    // Parsear género (puede venir null)
     Genero genero = null;
     if (generoStr != null && !generoStr.isBlank()) {
         try {
@@ -171,6 +170,7 @@ public class CancionController {
 
     return ResponseEntity.ok(respuesta);
 }
+
 
 @GetMapping("/{id}/radio")
 public ResponseEntity<?> generarRadio(
