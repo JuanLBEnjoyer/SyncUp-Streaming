@@ -3,6 +3,7 @@ package com.myapp.controller;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -36,9 +37,15 @@ public class AuthController {
         try{
             Usuario usuario = usuarioService.registrar(dto.getUser(), dto.getPassword(), dto.getNombre());
             UsuarioDto usuarioDto = usuarioService.toDto(usuario);
-            return ResponseEntity.ok(usuarioDto);
+
+
+            return ResponseEntity.status(HttpStatus.CREATED).body(Map.of(
+                "message", "Usuario registrado exitosamente",
+                "usuario", usuarioDto
+            ));
+            
         }catch(IllegalArgumentException e){
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
         }
     }
 
@@ -47,9 +54,14 @@ public class AuthController {
         try{
             Usuario usuario = usuarioService.login(dto.getUser(), dto.getPassword());
             UsuarioDto usuarioDto = usuarioService.toDto(usuario);
-            return ResponseEntity.ok(usuarioDto);
+
+            return ResponseEntity.ok(Map.of(
+                "message", "Inicio de sesión exitoso",
+                "usuario", usuarioDto
+            ));
+
         }catch(IllegalArgumentException e){
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
         }
     }
 

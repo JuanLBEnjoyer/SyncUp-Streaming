@@ -5,6 +5,7 @@ import com.myapp.dto.CancionDto;
 import com.myapp.dto.SimilitudDto;
 import com.myapp.service.CancionService;
 import com.myapp.service.RadioService;
+import com.myapp.util.ConversorDto;
 import com.myapp.ClasesPropias.ListaEnlazada.ListaEnlazada;
 import com.myapp.model.Cancion;
 import com.myapp.model.enums.Genero;
@@ -45,7 +46,11 @@ public class CancionController {
                 dto.getAnio(),
                 dto.getDuracion()
             );
-            return ResponseEntity.ok(new CancionDto(c));
+            return ResponseEntity.ok(Map.of(
+                "message", "Canción creada correctamente",
+                "cancion", new CancionDto(c)
+            ));
+
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
         }
@@ -65,14 +70,10 @@ public class CancionController {
     // --------- LISTAR TODAS ---------
 
     @GetMapping
-    public ResponseEntity<List<CancionDto>> listarTodas() {
+    public ResponseEntity<?> listarTodas() {
         ListaEnlazada<Cancion> lista = cancionService.listarTodas();
-        List<CancionDto> respuesta = new ArrayList<>();
-
-        for (int i = 0; i < lista.tamaño(); i++) {
-            respuesta.add(new CancionDto(lista.obtener(i)));
-        }
-
+        CancionDto[] respuesta = ConversorDto.listaCancionesAArray(lista);
+        
         return ResponseEntity.ok(respuesta);
     }
 
@@ -94,7 +95,11 @@ public class CancionController {
             existente.setDuracion(dto.getDuracion());
 
             Cancion actualizada = cancionService.actualizar(existente);
-            return ResponseEntity.ok(new CancionDto(actualizada));
+            CancionDto respuesta = new CancionDto(actualizada);
+            return ResponseEntity.ok(Map.of(
+                "message", "Canción actualizada correctamente",
+                "cancion", respuesta
+            ));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
         }
@@ -116,8 +121,8 @@ public class CancionController {
 
     @PostMapping("/{id1}/similitud/{id2}")
     public ResponseEntity<?> establecerSimilitud(@PathVariable Long id1,
-                                                 @PathVariable Long id2,
-                                                 @Valid @RequestBody SimilitudDto dto) {
+                                                @PathVariable Long id2,
+                                                @Valid @RequestBody SimilitudDto dto) {
         try {
             cancionService.relacionar(id1, id2, dto.getSimilitud());
             return ResponseEntity.ok(Map.of("message", "Similitud establecida correctamente"));
@@ -132,11 +137,7 @@ public class CancionController {
         @RequestParam(name = "limite", required = false, defaultValue = "10") int limite) {
 
     ListaEnlazada<String> sugerencias = cancionService.sugerirTitulos(prefijo, limite);
-    List<String> respuesta = new ArrayList<>();
-
-    for (int i = 0; i < sugerencias.tamaño(); i++) {
-        respuesta.add(sugerencias.obtener(i));
-    }
+    String[] respuesta = ConversorDto.listaStringsAArray(sugerencias);
 
     return ResponseEntity.ok(respuesta);
 }
@@ -163,10 +164,7 @@ public ResponseEntity<?> buscar(
 
     var lista = cancionService.buscar(artista, genero, año, usarAnd);
 
-    List<CancionDto> respuesta = new ArrayList<>();
-    for (int i = 0; i < lista.tamaño(); i++) {
-        respuesta.add(new CancionDto(lista.obtener(i)));
-    }
+    CancionDto[] respuesta = ConversorDto.listaCancionesAArray(lista);
 
     return ResponseEntity.ok(respuesta);
 }
@@ -178,11 +176,7 @@ public ResponseEntity<?> generarRadio(
         @RequestParam(name = "max", required = false, defaultValue = "20") int max) {
     try {
         ListaEnlazada<Cancion> lista = radioService.generarRadio(id, max);
-        List<CancionDto> respuesta = new ArrayList<>();
-
-        for (int i = 0; i < lista.tamaño(); i++) {
-            respuesta.add(new CancionDto(lista.obtener(i)));
-        }
+        CancionDto[] respuesta = ConversorDto.listaCancionesAArray(lista);
 
         return ResponseEntity.ok(respuesta);
     } catch (IllegalArgumentException e) {
