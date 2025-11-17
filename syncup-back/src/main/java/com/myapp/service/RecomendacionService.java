@@ -22,10 +22,6 @@ public class RecomendacionService {
         this.grafoService = grafoService;
     }
 
-    /**
-     * Genera la playlist "Descubrimiento Semanal" para un usuario.
-     * Usa las canciones favoritas como base y busca vecinas en el GrafoDeSimilitud.
-     */
     public ListaEnlazada<Cancion> generarDescubrimientoSemanal(String username, int maxResultados) {
         ListaEnlazada<Cancion> playlist = new ListaEnlazada<>();
 
@@ -38,7 +34,6 @@ public class RecomendacionService {
 
         ListaEnlazada<Cancion> favoritos = u.getCancionesFavoritas();
 
-        // Si no tiene favoritos, devolvemos las primeras canciones del catálogo
         if (favoritos == null || favoritos.tamaño() == 0) {
             ListaEnlazada<Cancion> todas = grafoService.obtenerTodas();
             for (int i = 0; i < todas.tamaño() && playlist.tamaño() < maxResultados; i++) {
@@ -47,10 +42,8 @@ public class RecomendacionService {
             return playlist;
         }
 
-        // Mapa: idCancion -> puntaje acumulado
         MapSimple<Long, Double> puntajes = new HashMapSimple<>();
 
-        // 1) Recorremos favoritos y sumamos puntajes a sus vecinos
         for (int i = 0; i < favoritos.tamaño(); i++) {
             Cancion fav = favoritos.obtener(i);
             if (fav == null || fav.getId() == null) continue;
@@ -64,7 +57,6 @@ public class RecomendacionService {
                 Cancion vecino = it.siguiente();
                 if (vecino == null || vecino.getId() == null) continue;
 
-                // No sugerir canciones que ya son favoritas
                 if (favoritos.contiene(vecino)) continue;
 
                 double similitud = grafoService.obtenerSimilitud(fav.getId(), vecino.getId());
@@ -74,7 +66,6 @@ public class RecomendacionService {
             }
         }
 
-        // Si no hay candidatos, fallback: primeras canciones del catálogo
         if (puntajes.isEmpty()) {
             ListaEnlazada<Cancion> todas = grafoService.obtenerTodas();
             for (int i = 0; i < todas.tamaño() && playlist.tamaño() < maxResultados; i++) {
@@ -86,7 +77,6 @@ public class RecomendacionService {
             return playlist;
         }
 
-        // 2) Seleccionar las mejores canciones según puntaje (sin usar estructuras de Java)
         SetPropio<Long> usados = new SetPropio<>();
 
         while (playlist.tamaño() < maxResultados && usados.tamaño() < puntajes.size()) {

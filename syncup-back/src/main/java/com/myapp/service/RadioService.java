@@ -21,13 +21,6 @@ public class RadioService {
         this.grafoService = grafoService;
     }
 
-    /**
-     * Genera una cola de reproducción tipo "Radio" a partir de una canción inicial.
-     *
-     * @param idInicial   ID de la canción desde donde comienza la radio.
-     * @param maxResultados Cantidad máxima de canciones en la cola.
-     * @return ListaEnlazada<Cancion> con la secuencia de reproducción.
-     */
     public ListaEnlazada<Cancion> generarRadio(Long idInicial, int maxResultados) {
         ListaEnlazada<Cancion> cola = new ListaEnlazada<>();
 
@@ -39,9 +32,7 @@ public class RadioService {
             throw new IllegalArgumentException("La canción inicial no existe en el grafo");
         }
 
-        // Conjunto de IDs ya visitados (para no repetir canciones)
         SetPropio<Long> visitados = new SetPropio<>();
-        // Cola de IDs por procesar (BFS)
         ListaEnlazada<Long> pendientes = new ListaEnlazada<>();
 
         visitados.agregar(idInicial);
@@ -56,7 +47,6 @@ public class RadioService {
                 cola.agregar(actual);
             }
 
-            // Obtener vecinos (canciones similares) usando el grafo de similitud
             SetPropio<Cancion> vecinos = grafoService.vecinos(actualId);
             if (vecinos == null) continue;
 

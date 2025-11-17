@@ -42,8 +42,6 @@ public class UsuarioController {
         this.csvService = csvService;
     }
 
-    // ---------- OBTENER PERFIL ----------
-
     @GetMapping("/{user}")
     public ResponseEntity<?> obtenerPerfil(@PathVariable String user) {
         Usuario u = usuarioService.obtenerUsuario(user);

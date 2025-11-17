@@ -4,9 +4,7 @@ import com.myapp.ClasesPropias.Iterador.IteradorPropio;
 
 import java.util.NoSuchElementException;
 
-/**
- * Iterador propio para recorrer una ListaEnlazada.
- */
+
 public class IteradorLista<T> implements IteradorPropio<T> {
 
     private Nodo<T> actual;

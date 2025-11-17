@@ -2,10 +2,7 @@ package com.myapp.ClasesPropias.Trie;
 import com.myapp.ClasesPropias.Map.MapSimple;
 import com.myapp.ClasesPropias.Map.HashMapSimple;
 
-/**
- * Nodo interno del Trie.
- * Usa estructuras propias (MapSimple) para almacenar sus hijos.
- */
+
 public class NodoTrie {
 
     MapSimple<Character, NodoTrie> hijos;

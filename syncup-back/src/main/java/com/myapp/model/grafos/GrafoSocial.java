@@ -6,28 +6,18 @@ import com.myapp.ClasesPropias.ListaEnlazada.ListaEnlazada;
 import com.myapp.ClasesPropias.Set.SetPropio;
 import com.myapp.ClasesPropias.Iterador.IteradorPropio;
 
-/**
- * Grafo social dirigido entre usuarios.
- * Cada nodo es un usuario identificado por su username.
- * Las aristas representan relaciones de seguimiento (userA sigue a userB).
- * Utiliza estructuras de datos propias: MapSimple, SetPropio, ListaEnlazada.
- */
 
 public class GrafoSocial {
 
-    // username -> vecinos
     private final MapSimple<String, SetPropio<String>> relaciones = new HashMapSimple<>();
 
-    /** Crea el vértice si no existe. (idempotente) */
     public void agregarUsuario(String user) {
         if (!relaciones.containsKey(user)) {
             relaciones.put(user, new SetPropio<>());
         }
     }
 
-    /** Elimina el vértice y todas sus aristas. */
     public void eliminarUsuario(String user) {
-        // quitar referencias en otros
         for (String u : relaciones.keys()) {
             SetPropio<String> s = relaciones.get(u);
             if (s != null) s.eliminar(user);
@@ -35,13 +25,11 @@ public class GrafoSocial {
         relaciones.remove(user);
     }
 
-    /** Conecta userA <-> userB (no dirigido). Requiere que existan. */
     public void conectar(String userA, String userB) {
         relaciones.get(userA).agregar(userB);
         relaciones.get(userB).agregar(userA);
     }
 
-    /** Rompe la conexión (si existe). Requiere que existan. */
     public void desconectar(String userA, String userB) {
         SetPropio<String> a = relaciones.get(userA);
         SetPropio<String> b = relaciones.get(userB);
@@ -49,7 +37,6 @@ public class GrafoSocial {
         if (b != null) b.eliminar(userA);
     }
 
-    /** Copia de seguidos (para no exponer referencias internas). */
     public SetPropio<String> seguidos(String user) {
         SetPropio<String> r = new SetPropio<>();
         SetPropio<String> s = relaciones.get(user);
@@ -59,7 +46,6 @@ public class GrafoSocial {
         return r;
     }
 
-    /** Seguidores de `user` (búsqueda inversa). */
     public SetPropio<String> seguidores(String user) {
         SetPropio<String> r = new SetPropio<>();
         for (String u : relaciones.keys()) {
@@ -69,7 +55,6 @@ public class GrafoSocial {
         return r;
     }
 
-    /** Sugerencias por BFS (“amigos de amigos”), retorna usernames. */
     public ListaEnlazada<String> sugerir(String user, int limite) {
         ListaEnlazada<String> sug = new ListaEnlazada<>();
         if (limite <= 0) return sug;

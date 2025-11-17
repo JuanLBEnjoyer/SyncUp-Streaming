@@ -4,10 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-/**
- * Implementación simple de un mapa hash con encadenamiento (buckets con listas enlazadas).
- * No pretende reemplazar a java.util.HashMap pero provee las operaciones básicas.
- */
 public class HashMapSimple<K, V> implements MapSimple<K, V> {
 
     private static class Entry<K, V> {

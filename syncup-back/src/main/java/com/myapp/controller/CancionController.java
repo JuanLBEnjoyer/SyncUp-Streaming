@@ -9,16 +9,11 @@ import com.myapp.util.ConversorDto;
 import com.myapp.ClasesPropias.ListaEnlazada.ListaEnlazada;
 import com.myapp.model.Cancion;
 import com.myapp.model.enums.Genero;
-
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import org.springframework.web.bind.MethodArgumentNotValidException;
-
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -33,8 +28,6 @@ public class CancionController {
         this.cancionService = cancionService;
         this.radioService = radioService;
     }
-
-    // --------- CREAR CANCIÓN ---------
 
     @PostMapping
     public ResponseEntity<?> crear(@Valid @RequestBody CancionCreateDto dto) {
@@ -67,7 +60,6 @@ public class CancionController {
         return ResponseEntity.ok(new CancionDto(c));
     }
 
-    // --------- LISTAR TODAS ---------
 
     @GetMapping
     public ResponseEntity<?> listarTodas() {
@@ -77,7 +69,6 @@ public class CancionController {
         return ResponseEntity.ok(respuesta);
     }
 
-    // --------- ACTUALIZAR ---------
 
     @PutMapping("/{id}")
     public ResponseEntity<?> actualizar(@PathVariable Long id,
@@ -105,8 +96,6 @@ public class CancionController {
         }
     }
 
-    // --------- ELIMINAR ---------
-
     @DeleteMapping("/{id}")
     public ResponseEntity<?> eliminar(@PathVariable Long id) {
         try {
@@ -116,8 +105,6 @@ public class CancionController {
             return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
         }
     }
-
-    // --------- ESTABLECER SIMILITUD ENTRE DOS CANCIONES ---------
 
     @PostMapping("/{id1}/similitud/{id2}")
     public ResponseEntity<?> establecerSimilitud(@PathVariable Long id1,
@@ -183,9 +170,6 @@ public ResponseEntity<?> generarRadio(
         return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
     }
 }
-
-
-    // --------- MANEJO DE VALIDACIONES (@Valid) ---------
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<?> handleValidationExceptions(MethodArgumentNotValidException ex) {

@@ -12,17 +12,6 @@ import org.springframework.stereotype.Service;
 @Service
 public class BusquedaConcurrenteService {
 
-    /**
-     * Busca canciones usando múltiples hilos para paralelizar el trabajo.
-     * 
-     * @param todas Catálogo completo de canciones
-     * @param artista Filtro por artista (nullable)
-     * @param genero Filtro por género (nullable)
-     * @param anio Filtro por año (nullable)
-     * @param usarAnd true para AND lógico, false para OR
-     * @param numHilos Cantidad de hilos a utilizar
-     * @return Lista con canciones que cumplen los criterios
-     */
     public ListaEnlazada<Cancion> buscarConHilos(
             ListaEnlazada<Cancion> todas,
             String artista,
@@ -50,7 +39,6 @@ public class BusquedaConcurrenteService {
             threads[i].start();
         }
 
-        // Esperar a que todos terminen
         for (BuscadorThread thread : threads) {
             try {
                 thread.join();
@@ -72,16 +60,6 @@ public class BusquedaConcurrenteService {
         return resultadoFinal;
     }
 
-    /**
-     * Hilo trabajador que busca en un rango específico del catálogo.
-     * Es estática porque no necesita acceder a campos de instancia
-     * del servicio padre.
-     * 
-     * Está dentro del servicio porque:
-     * - Solo se usa aquí (encapsulación)
-     * - Mantiene el código cohesionado
-     * - Evita contaminar el paquete con clases pequeñas
-     */
     private static class BuscadorThread extends Thread {
         private final ListaEnlazada<Cancion> catalogo;
         private final int inicio;

@@ -30,9 +30,6 @@ public class GrafoDeSimilitud {
         this.similitudes = new HashMapSimple<>();
     }
 
-    // ---------- NODOS (CANCIONES) ----------
-
-    /** Agrega una canción como nodo del grafo (si no existe) o actualiza su metadata. */
     public void agregarCancion(Cancion cancion) {
         if (cancion == null || cancion.getId() == null) return;
 
@@ -41,16 +38,13 @@ public class GrafoDeSimilitud {
             canciones.put(id, cancion);
             similitudes.put(id, new HashMapSimple<>());
         } else {
-            // Actualiza datos (titulo, artista, etc.) sin tocar las aristas
             canciones.put(id, cancion);
         }
     }
 
-    /** Elimina la canción y todas sus relaciones de similitud. */
     public void eliminarCancion(Long id) {
         if (id == null) return;
 
-        // Eliminar referencias en otros nodos
         for (Long key : similitudes.keys()) {
             MapSimple<Long, Double> inner = similitudes.get(key);
             if (inner != null) {
@@ -69,8 +63,6 @@ public class GrafoDeSimilitud {
         if (id == null) return null;
         return canciones.get(id);
     }
-
-    /** Lista todas las canciones del grafo en una ListaEnlazada propia. */
     public ListaEnlazada<Cancion> obtenerTodasCanciones() {
         ListaEnlazada<Cancion> lista = new ListaEnlazada<>();
         for (Long id : canciones.keys()) {
@@ -83,12 +75,6 @@ public class GrafoDeSimilitud {
         return canciones.size();
     }
 
-    // ---------- ARISTAS (SIMILITUD) ----------
-
-    /**
-     * Crea/actualiza la arista no dirigida entre dos canciones con el peso "similitud".
-     * Se asume validación de rango [0,1] y existencia de nodos desde el service.
-     */
     public void actualizarSimilitud(Long id1, Long id2, double similitud) {
         if (id1 == null || id2 == null) return;
         if (!canciones.containsKey(id1) || !canciones.containsKey(id2)) return;
@@ -98,10 +84,9 @@ public class GrafoDeSimilitud {
         if (m1 == null || m2 == null) return;
 
         m1.put(id2, similitud);
-        m2.put(id1, similitud); // no dirigido
+        m2.put(id1, similitud); 
     }
 
-    /** Retorna la similitud directa entre dos canciones, 0.0 si no hay arista. */
     public double getSimilitud(Long id1, Long id2) {
         if (id1 == null || id2 == null) return 0.0;
         MapSimple<Long, Double> inner = similitudes.get(id1);
@@ -110,7 +95,6 @@ public class GrafoDeSimilitud {
         return (v == null) ? 0.0 : v;
     }
 
-    /** Vecinos con similitud >= UMBRAL_SIMILITUD. */
     public SetPropio<Cancion> obtenerVecinos(Long id) {
         SetPropio<Cancion> vecinos = new SetPropio<>();
         if (id == null || !canciones.containsKey(id)) return vecinos;
@@ -127,15 +111,6 @@ public class GrafoDeSimilitud {
         return vecinos;
     }
 
-    // ---------- DIJKSTRA (RF-022) SIN PriorityQueue NI java.util LIST ----------
-
-    /**
-     * Implementación de Dijkstra SIN PriorityQueue (selección lineal).
-     * Minimiza la suma de -log(similitud) para maximizar el producto de similitudes.
-     *
-     * Retorna la ruta desde origen hasta destino como ListaEnlazada<Cancion>.
-     * Si no hay camino, retorna una lista vacía.
-     */
     public ListaEnlazada<Cancion> encontrarCaminoMasCorto(Long idOrigen, Long idDestino) {
         ListaEnlazada<Cancion> rutaVacia = new ListaEnlazada<>();
 
@@ -148,7 +123,6 @@ public class GrafoDeSimilitud {
         MapSimple<Long, Long> previos = new HashMapSimple<>();
         SetPropio<Long> visitados = new SetPropio<>();
 
-        // Inicializar distancias
         for (Long id : canciones.keys()) {
             distancias.put(id, Double.POSITIVE_INFINITY);
             previos.put(id, null);
@@ -156,7 +130,6 @@ public class GrafoDeSimilitud {
         distancias.put(idOrigen, 0.0);
 
         while (true) {
-            // 1. Tomar el no visitado con menor distancia
             Long actual = null;
             double mejor = Double.POSITIVE_INFINITY;
 
@@ -170,12 +143,11 @@ public class GrafoDeSimilitud {
                 }
             }
 
-            if (actual == null) break;                // no quedan alcanzables
-            if (actual.equals(idDestino)) break;      // llegamos al destino
+            if (actual == null) break;              
+            if (actual.equals(idDestino)) break;      
 
             visitados.agregar(actual);
 
-            // 2. Relajar aristas de "actual"
             MapSimple<Long, Double> vecinos = similitudes.get(actual);
             if (vecinos == null) continue;
 
@@ -201,10 +173,9 @@ public class GrafoDeSimilitud {
 
         Double distDestino = distancias.get(idDestino);
         if (distDestino == null || distDestino.equals(Double.POSITIVE_INFINITY)) {
-            return rutaVacia; // sin camino
+            return rutaVacia; 
         }
 
-        // 3. Reconstruir ruta destino -> origen
         ListaEnlazada<Cancion> rutaInvertida = new ListaEnlazada<>();
         Long actual = idDestino;
         while (actual != null) {
@@ -212,7 +183,6 @@ public class GrafoDeSimilitud {
             actual = previos.get(actual);
         }
 
-        // 4. Invertir para dejarla origen -> destino
         ListaEnlazada<Cancion> ruta = new ListaEnlazada<>();
         for (int i = rutaInvertida.tamaño() - 1; i >= 0; i--) {
             ruta.agregar(rutaInvertida.obtener(i));

@@ -12,7 +12,6 @@ public class GrafoSimilitudService {
 
     private final GrafoDeSimilitud grafo = new GrafoDeSimilitud();
 
-    // ---- NODOS ----
 
     public void registrarCancion(Cancion c) {
         if (c == null || c.getId() == null) {
@@ -70,8 +69,6 @@ public class GrafoSimilitudService {
         }
         return grafo.obtenerVecinos(id);
     }
-
-    // ---- DIJKSTRA ----
 
     public ListaEnlazada<Cancion> caminoMasSimilar(Long origen, Long destino) {
         return grafo.encontrarCaminoMasCorto(origen, destino);

@@ -1,8 +1,6 @@
 package com.myapp.ClasesPropias.Map;
 
-/**
- * Interfaz mínima para un Map genérico simple.
- */
+
 public interface MapSimple<K, V> {
     V put(K key, V value);
     V get(K key);
