@@ -13,25 +13,27 @@ import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
 
 
+
 @Service
 public class CsvService {
+
 
     public byte[] generarCsvFavoritos(ListaEnlazada<Cancion> favoritos, String username) 
             throws IOException {
         
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        OutputStreamWriter writer = new OutputStreamWriter(out, StandardCharsets.UTF_8);
-
+    
         out.write(0xEF);
         out.write(0xBB);
         out.write(0xBF);
+        
+        OutputStreamWriter writer = new OutputStreamWriter(out, StandardCharsets.UTF_8);
 
         CSVFormat csvFormat = CSVFormat.DEFAULT.builder()
                 .setHeader("ID", "Título", "Artista", "Género", "Año", "Duración (segundos)")
                 .build();
 
         try (CSVPrinter csvPrinter = new CSVPrinter(writer, csvFormat)) {
-            
             for (int i = 0; i < favoritos.tamaño(); i++) {
                 Cancion c = favoritos.obtener(i);
                 

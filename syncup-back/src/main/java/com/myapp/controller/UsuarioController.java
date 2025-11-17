@@ -8,26 +8,20 @@ import com.myapp.service.GrafoSocialService;
 import com.myapp.service.RecomendacionService;
 import com.myapp.service.UsuarioService;
 import com.myapp.util.ConversorDto;
-import com.myapp.ClasesPropias.Iterador.IteradorPropio;
 import com.myapp.ClasesPropias.ListaEnlazada.ListaEnlazada;
 import com.myapp.ClasesPropias.Map.HashMapSimple;
 import com.myapp.ClasesPropias.Map.MapSimple;
 import com.myapp.ClasesPropias.Set.SetPropio;
 import com.myapp.model.Usuario;
 import com.myapp.model.Cancion;
-
 import jakarta.validation.Valid;
 
-
-import org.apache.tomcat.util.http.parser.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import java.io.IOException;
-import java.net.http.HttpHeaders;
-import java.util.List;
+import org.springframework.http.HttpHeaders;
 import java.util.Map;
 
 
@@ -194,22 +188,16 @@ public class UsuarioController {
     @GetMapping("/{user}/seguidores")
     public ResponseEntity<?> obtenerSeguidores(@PathVariable String user) {
         try {
-            SetPropio<String> seguidoresIds = grafoSocialService.seguidores(user);
-            List<UsuarioDto> seguidores = new ArrayList<>();
-
-            IteradorPropio<String> it = seguidoresIds.iterador();
-            while (it.tieneSiguiente()) {
-                String username = it.siguiente();
-                Usuario u = usuarioService.obtenerUsuario(username);
-                if (u != null) {
-                    seguidores.add(usuarioService.toDto(u));
-                }
-            }
+             SetPropio<String> seguidoresIds = grafoSocialService.seguidores(user);
+            UsuarioDto[] seguidores = ConversorDto.setUsuariosAArray(
+                seguidoresIds, 
+                usuarioService::obtenerUsuario
+            );
 
             return ResponseEntity.ok(Map.of(
                 "user", user,
                 "seguidores", seguidores,
-                "total", seguidores.size()
+                "total", seguidores.length
             ));
 
         } catch (IllegalArgumentException e) {
@@ -245,25 +233,52 @@ public class UsuarioController {
             ListaEnlazada<String> sugerenciasIds = 
                 grafoSocialService.sugerenciasIds(user, limite);
             
-            List<UsuarioDto> sugerencias = new ArrayList<>();
-
-            for (int i = 0; i < sugerenciasIds.tamaño(); i++) {
-                String username = sugerenciasIds.obtener(i);
-                Usuario u = usuarioService.obtenerUsuario(username);
-                if (u != null) {
-                    sugerencias.add(usuarioService.toDto(u));
-                }
-            }
+            UsuarioDto[] sugerencias = ConversorDto.listaUsernamesAArray(
+                sugerenciasIds, 
+                usuarioService::obtenerUsuario
+            );
 
             return ResponseEntity.ok(Map.of(
                 "user", user,
                 "sugerencias", sugerencias,
-                "total", sugerencias.size()
+                "total", sugerencias.length
             ));
-
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest()
                 .body(Map.of("message", e.getMessage()));
+        }
+    }
+
+    @GetMapping("/{user}/favoritos/csv")
+    public ResponseEntity<?> descargarFavoritosCSV(@PathVariable String user) {
+    try {
+        ListaEnlazada<Cancion> favoritos = usuarioService.obtenerFavoritos(user);
+
+        if (favoritos.estaVacia()) {
+            return ResponseEntity.badRequest().body(Map.of(
+                "message", "El usuario no tiene canciones favoritas"
+            ));
+        }
+
+     
+            byte[] csvBytes = csvService.generarCsvFavoritos(favoritos, user);
+            String nombreArchivo = csvService.generarNombreArchivo(user);
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.add(HttpHeaders.CONTENT_TYPE, "text/csv; charset=UTF-8");
+            headers.add(HttpHeaders.CONTENT_DISPOSITION, 
+                   "attachment; filename=\"" + nombreArchivo + "\"");
+
+            return ResponseEntity.ok()
+                .headers(headers)
+                .body(csvBytes);
+
+        } catch (IllegalArgumentException e) {
+        return ResponseEntity.badRequest()
+                .body(Map.of("message", e.getMessage()));
+        } catch (IOException e) {
+        return ResponseEntity.status(500)
+                .body(Map.of("message", "Error al generar el archivo CSV"));
         }
     }
 
