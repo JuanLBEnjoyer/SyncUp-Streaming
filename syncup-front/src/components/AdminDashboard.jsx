@@ -1,4 +1,6 @@
 import React from "react";
+import CancionesAdmin from "./CancionesAdmin";
+import UsuariosAdmin from "./UsuarioAdmin";
 
 export default function AdminDashboard({ currentView, user }) {
   const renderContent = () => {
@@ -6,9 +8,9 @@ export default function AdminDashboard({ currentView, user }) {
       case "dashboard":
         return <DashboardView user={user} />;
       case "canciones":
-        return <CancionesView />;
+        return <CancionesAdmin />;
       case "usuarios":
-        return <UsuariosView />;
+        return <UsuariosAdmin />;
       case "carga-masiva":
         return <CargaMasivaView />;
       default:
@@ -23,7 +25,7 @@ function DashboardView({ user }) {
   return (
     <div className="dashboard-view">
       <div className="view-header admin-header">
-        <h1>Panel de Administración 📊</h1>
+        <h1>Panel de Administración</h1>
         <p>Bienvenido, {user.nombre}</p>
       </div>
 
@@ -87,69 +89,6 @@ function DashboardView({ user }) {
   );
 }
 
-function CancionesView() {
-  return (
-    <div className="dashboard-view">
-      <div className="view-header">
-        <h1>Gestionar Canciones 🎵</h1>
-        <button className="btn-primary">+ Agregar Canción</button>
-      </div>
-
-      <div className="filters-section">
-        <input 
-          type="text" 
-          placeholder="Buscar canciones..."
-          className="filter-input"
-        />
-        <select className="filter-select">
-          <option>Todos los géneros</option>
-          <option>ROCK</option>
-          <option>POP</option>
-          <option>ELECTRONICA</option>
-          <option>HIPHOP</option>
-          <option>SALSA</option>
-          <option>REGGAETON</option>
-        </select>
-      </div>
-
-      <div className="empty-state">
-        <span className="empty-icon">🎵</span>
-        <p>No hay canciones en el catálogo</p>
-        <button className="btn-secondary">Agregar Primera Canción</button>
-      </div>
-    </div>
-  );
-}
-
-function UsuariosView() {
-  return (
-    <div className="dashboard-view">
-      <div className="view-header">
-        <h1>Gestionar Usuarios 👥</h1>
-        <p>Administrar cuentas de usuarios</p>
-      </div>
-
-      <div className="filters-section">
-        <input 
-          type="text" 
-          placeholder="Buscar usuarios..."
-          className="filter-input"
-        />
-        <select className="filter-select">
-          <option>Todos los roles</option>
-          <option>Usuarios</option>
-          <option>Administradores</option>
-        </select>
-      </div>
-
-      <div className="empty-state">
-        <span className="empty-icon">👤</span>
-        <p>No hay usuarios registrados</p>
-      </div>
-    </div>
-  );
-}
-
 function CargaMasivaView() {
   return (
     <div className="dashboard-view">
@@ -169,51 +108,6 @@ function CargaMasivaView() {
             <p><strong>Formato esperado:</strong></p>
             <code>titulo,artista,genero,año,duracion</code>
             <p><strong>Géneros válidos:</strong> ROCK, POP, ELECTRONICA, HIPHOP, SALSA, REGGAETON</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function MetricasView() {
-  return (
-    <div className="dashboard-view">
-      <div className="view-header">
-        <h1>Métricas del Sistema 📈</h1>
-        <p>Estadísticas y análisis</p>
-      </div>
-
-      <div className="metrics-grid">
-        <div className="metric-card">
-          <h3>Canciones por Género</h3>
-          <div className="chart-placeholder">
-            <span>📊</span>
-            <p>Gráfico de pastel</p>
-          </div>
-        </div>
-
-        <div className="metric-card">
-          <h3>Artistas Populares</h3>
-          <div className="chart-placeholder">
-            <span>📊</span>
-            <p>Gráfico de barras</p>
-          </div>
-        </div>
-
-        <div className="metric-card">
-          <h3>Canciones por Década</h3>
-          <div className="chart-placeholder">
-            <span>📊</span>
-            <p>Línea de tiempo</p>
-          </div>
-        </div>
-
-        <div className="metric-card">
-          <h3>Géneros Favoritos</h3>
-          <div className="chart-placeholder">
-            <span>📊</span>
-            <p>Ranking</p>
           </div>
         </div>
       </div>

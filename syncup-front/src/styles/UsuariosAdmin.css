@@ -1,0 +1,149 @@
+.usuarios-admin-view {
+  animation: fadeIn 0.5s ease;
+}
+
+.usuarios-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.usuarios-table thead {
+  background: rgba(15, 23, 42, 0.6);
+  border-bottom: 2px solid var(--border);
+}
+
+.usuarios-table th {
+  padding: 1rem;
+  text-align: left;
+  color: var(--text-secondary);
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.usuarios-table tbody tr {
+  border-bottom: 1px solid var(--border);
+  transition: all 0.3s ease;
+}
+
+.usuarios-table tbody tr:hover {
+  background: rgba(139, 92, 246, 0.05);
+}
+
+.usuarios-table tbody tr:last-child {
+  border-bottom: none;
+}
+
+.usuarios-table td {
+  padding: 1rem;
+  color: var(--text-primary);
+}
+
+.user-avatar-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.user-avatar-small {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  color: white;
+  font-size: 1rem;
+}
+
+.username {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.user-name {
+  color: var(--text-secondary);
+}
+
+.role-badge {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.role-admin {
+  background: rgba(139, 92, 246, 0.2);
+  color: #C4B5FD;
+}
+
+.role-user {
+  background: rgba(59, 130, 246, 0.2);
+  color: #93C5FD;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.favorites-count {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  background: rgba(139, 92, 246, 0.1);
+  border-radius: 8px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.btn-protected {
+  opacity: 0.5;
+  cursor: not-allowed !important;
+}
+
+.btn-protected:hover {
+  background: transparent !important;
+}
+
+.warning-text {
+  color: #FCA5A5;
+  font-size: 0.9rem;
+  margin-top: 1rem;
+  padding: 0.75rem;
+  background: rgba(239, 68, 68, 0.1);
+  border-radius: 8px;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+@media (max-width: 1024px) {
+  .table-container {
+    overflow-x: auto;
+  }
+
+  .usuarios-table {
+    min-width: 700px;
+  }
+}
+
+@media (max-width: 768px) {
+  .view-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .filters-section {
+    flex-direction: column;
+  }
+
+  .user-avatar-small {
+    width: 32px;
+    height: 32px;
+    font-size: 0.9rem;
+  }
+}

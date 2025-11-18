@@ -37,16 +37,6 @@ export default function Sidebar({ isOpen, currentView, setCurrentView, isAdmin }
           </button>
         ))}
       </nav>
-
-      {isOpen && (
-        <div className="sidebar-footer">
-          <div className="sidebar-info">
-            <p className="sidebar-info-title">SyncUp Premium</p>
-            <p className="sidebar-info-text">Disfruta sin límites</p>
-            <button className="btn-premium">Mejorar Plan</button>
-          </div>
-        </div>
-      )}
     </aside>
   );
 }
