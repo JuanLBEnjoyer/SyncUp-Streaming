@@ -59,7 +59,6 @@ export default function Register() {
   return (
     <div className="auth-container">
       <div className="auth-card">
-        {/* Logo y header */}
         <div className="auth-logo">
           <img 
             src="/logo-syncup.png" 
