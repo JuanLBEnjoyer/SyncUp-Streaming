@@ -15,13 +15,10 @@ import org.springframework.web.multipart.MultipartFile;
 import com.myapp.service.UsuarioService;
 import com.myapp.util.ConversorDto;
 import com.myapp.ClasesPropias.ListaEnlazada.ListaEnlazada;
-import com.myapp.ClasesPropias.Map.MapSimple;
-import com.myapp.dto.MetricasDto;
 import com.myapp.dto.UsuarioDto;
 import com.myapp.model.Usuario;
 import com.myapp.service.CancionService;
 import com.myapp.service.CargaMasivaService;
-import com.myapp.service.MetricasService;
 
 
 @RestController
@@ -32,13 +29,10 @@ public class AdminController {
     private final UsuarioService usuarioService;
     private final CancionService cancionService;
     private final CargaMasivaService cargaMasivaService;
-    private final MetricasService metricasService;
-
-    public AdminController(UsuarioService usuarioService, CancionService cancionService, CargaMasivaService cargaMasivaService, MetricasService metricasService) {
+    public AdminController(UsuarioService usuarioService, CancionService cancionService, CargaMasivaService cargaMasivaService) {
         this.usuarioService = usuarioService;
         this.cancionService = cancionService;
         this.cargaMasivaService = cargaMasivaService;
-        this.metricasService = metricasService;
     }  
     
     @GetMapping("/usuarios")
@@ -154,82 +148,5 @@ public class AdminController {
                 .body(Map.of("message", "Error al obtener información: " + e.getMessage()));
         }
     }
-
-    @GetMapping("/metricas")
-public ResponseEntity<?> obtenerMetricas() {
-    try {
-        MetricasDto metricas = metricasService.calcularMetricas();
-        
-        // Convertir estructuras propias a formato JSON
-        return ResponseEntity.ok(Map.of(
-            "totalUsuarios", metricas.getTotalUsuarios(),
-            "totalCanciones", metricas.getTotalCanciones(),
-            "cancionesPorGenero", convertirMapAJson(metricas.getCancionesPorGenero()),
-            "cancionesPorDecada", convertirMapAJson(metricas.getCancionesPorDecada()),
-            "topArtistas", convertirTopArtistasAJson(metricas.getTopArtistas()),
-            "generosMasFavoritos", convertirMapAJson(metricas.getGenerosMasFavoritos()),
-            "duracionPromedio", Math.round(metricas.getDuracionPromedio() * 100.0) / 100.0,
-            "añoMasAntiguo", metricas.getAñoMasAntiguo(),
-            "añoMasReciente", metricas.getAñoMasReciente()
-        ));
-
-    } catch (Exception e) {
-        return ResponseEntity.status(500)
-            .body(Map.of("message", "Error al calcular métricas: " + e.getMessage()));
-    }
-}
-
-    private Map<String, Integer> convertirMapAJson(MapSimple<String, Integer> mapa) {
-        if (mapa == null) {
-            return Map.of();
-        }
-
-
-        int count = 0;
-        for (String key : mapa.keys()) {
-            if (mapa.get(key) != null) {
-            count++;
-            }
-        }
-
-        String[] keys = new String[count];
-        Integer[] values = new Integer[count];
-    
-        int i = 0;
-        for (String key : mapa.keys()) {
-            Integer value = mapa.get(key);
-            if (value != null) {
-                keys[i] = key;
-                values[i] = value;
-                i++;
-        }
-    }
-
-        java.util.Map<String, Integer> resultado = new java.util.HashMap<>();
-        for (int j = 0; j < count; j++) {
-            resultado.put(keys[j], values[j]);
-        }
-
-        return resultado;
-    }
-
-    private Map<String, Object>[] convertirTopArtistasAJson(ListaEnlazada<MetricasService.TopItem> lista) {
-        if (lista == null || lista.estaVacia()) {
-            return new Map[0];
-        }
-
-        Map<String, Object>[] array = new Map[lista.tamaño()];
-    
-        for (int i = 0; i < lista.tamaño(); i++) {
-            var item = lista.obtener(i);
-            array[i] = Map.of(
-                "nombre", item.getNombre(),
-                "cantidad", item.getValor()
-            );
-        }
-
-        return array;
-    }
-
     
 }
