@@ -72,6 +72,45 @@ public class UsuarioService {
         return usuarios.get(user);
     }
 
+    public ListaEnlazada<Usuario> listarTodos() {
+        ListaEnlazada<Usuario> lista = new ListaEnlazada<>();
+        
+        for (String key : usuarios.keys()) {
+            Usuario u = usuarios.get(key);
+            if (u != null) {
+                lista.agregar(u);
+            }
+        }
+        
+        return lista;
+    }
+
+    public void eliminarUsuario(String user) {
+        if (user == null || user.trim().isEmpty()) {
+            throw new IllegalArgumentException("El username no puede estar vacío");
+        }
+
+        Usuario u = usuarios.get(user);
+        
+        if (u == null) {
+            throw new IllegalArgumentException("El usuario no existe");
+        }
+
+        if (u.getRole() == Role.ADMIN) {
+            throw new IllegalArgumentException("No se puede eliminar al administrador");
+        }
+
+        usuarios.remove(user);
+
+        if (grafoSocialService.existeEnGrafo(user)) {
+            grafoSocialService.eliminarUsuarioDelGrafo(user);
+        }
+    }
+
+    public int contarUsuarios() {
+        return usuarios.size();
+    }
+
     public void agregarFavorito(String user, Long idCancion) {
         Usuario u = usuarios.get(user);
         if (u == null) {
