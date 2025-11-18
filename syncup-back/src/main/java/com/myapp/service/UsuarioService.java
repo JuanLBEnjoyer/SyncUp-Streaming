@@ -154,6 +154,12 @@ public class UsuarioService {
         dto.setUser(usuario.getUser());
         dto.setNombre(usuario.getNombre());
         dto.setRole(usuario.getRole());
+        int totalFavoritos = 0;
+        if (usuario.getCancionesFavoritas() != null) {
+            totalFavoritos = usuario.getCancionesFavoritas().tamaño();
+        }
+        dto.setTotalFavoritos(totalFavoritos);
+        
         return dto;
     }
 

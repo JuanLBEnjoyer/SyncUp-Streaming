@@ -14,6 +14,12 @@ export default function Home({ user, setUser }) {
   useEffect(() => {
     if (!user) {
       nav("/login");
+    } else {
+      if (user.role === "ADMIN") {
+        setCurrentView("dashboard");
+      } else {
+        setCurrentView("inicio");
+      }
     }
   }, [user, nav]);
 
@@ -56,9 +62,17 @@ export default function Home({ user, setUser }) {
 
         <main className={`main-content ${sidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
           {isAdmin ? (
-            <AdminDashboard currentView={currentView} user={user} />
+            <AdminDashboard 
+              currentView={currentView} 
+              setCurrentView={setCurrentView}
+              user={user} 
+            />
           ) : (
-            <UserDashboard currentView={currentView} user={user} />
+            <UserDashboard 
+              currentView={currentView} 
+              setCurrentView={setCurrentView}
+              user={user} 
+            />
           )}
         </main>
       </div>

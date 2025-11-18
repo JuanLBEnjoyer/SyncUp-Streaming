@@ -15,7 +15,9 @@ public class CancionService {
     private final BusquedaConcurrenteService busquedaConcurrente;
     private long secuencia = 1L;
 
-    public CancionService(GrafoSimilitudService grafoSimilitud, TrieAutocompletadoService trieAutocompletado, BusquedaConcurrenteService busquedaConcurrente) {
+    public CancionService(GrafoSimilitudService grafoSimilitud, 
+                        TrieAutocompletadoService trieAutocompletado, 
+                        BusquedaConcurrenteService busquedaConcurrente) {
         this.grafoSimilitud = grafoSimilitud;
         this.trieAutocompletado = trieAutocompletado;
         this.busquedaConcurrente = busquedaConcurrente;
@@ -31,8 +33,55 @@ public class CancionService {
         c.setDuracion(duracion);
 
         grafoSimilitud.registrarCancion(c);
+        
         trieAutocompletado.registrarTitulo(titulo);
+        
+        calcularSimilitudesAutomaticas(c);
+        
         return c;
+    }
+
+    private void calcularSimilitudesAutomaticas(Cancion nueva) {
+        ListaEnlazada<Cancion> todas = grafoSimilitud.obtenerTodas();
+        
+        for (int i = 0; i < todas.tamaño(); i++) {
+            Cancion existente = todas.obtener(i);
+            
+            if (existente.getId().equals(nueva.getId())) {
+                continue;
+            }
+            
+            double similitud = calcularSimilitud(nueva, existente);
+            
+            if (similitud >= 0.5) {
+                grafoSimilitud.establecerSimilitud(nueva.getId(), existente.getId(), similitud);
+            }
+        }
+    }
+
+    private double calcularSimilitud(Cancion c1, Cancion c2) {
+        double similitud = 0.0;
+        
+        if (c1.getGenero() == c2.getGenero()) {
+            similitud += 0.4;
+        }
+
+        if (c1.getArtista() != null && c2.getArtista() != null) {
+            if (c1.getArtista().equalsIgnoreCase(c2.getArtista())) {
+                similitud += 0.3;
+            }
+        }
+        
+        int diferenciaAños = Math.abs(c1.getAño() - c2.getAño());
+        if (diferenciaAños <= 5) {
+            similitud += 0.2;
+        }
+        
+        double diferenciaDuracion = Math.abs(c1.getDuracion() - c2.getDuracion());
+        if (diferenciaDuracion <= 30) {
+            similitud += 0.1;
+        }
+        return Math.min(similitud, 1.0);
     }
 
     public Cancion obtener(Long id) {
@@ -50,9 +99,32 @@ public class CancionService {
         if (!grafoSimilitud.existeCancion(c.getId())) {
             throw new IllegalArgumentException("La canción no existe");
         }
-        grafoSimilitud.registrarCancion(c); // actúa como reemplazo de metadata
+        
+        grafoSimilitud.registrarCancion(c);
+
         trieAutocompletado.registrarTitulo(c.getTitulo());
+        
+        recalcularSimilitudes(c);
+        
         return c;
+    }
+
+    private void recalcularSimilitudes(Cancion actualizada) {
+        ListaEnlazada<Cancion> todas = grafoSimilitud.obtenerTodas();
+        
+        for (int i = 0; i < todas.tamaño(); i++) {
+            Cancion otra = todas.obtener(i);
+            
+            if (otra.getId().equals(actualizada.getId())) {
+                continue;
+            }
+            
+            double similitud = calcularSimilitud(actualizada, otra);
+            
+            if (similitud >= 0.5) {
+                grafoSimilitud.establecerSimilitud(actualizada.getId(), otra.getId(), similitud);
+            }
+        }
     }
 
     public void eliminar(Long id) {
@@ -88,9 +160,9 @@ public class CancionService {
     }
 
     public ListaEnlazada<Cancion> buscar(String artista,
-                                         Genero genero,
-                                         Integer anio,
-                                         boolean usarAnd) {
+                                        Genero genero,
+                                        Integer anio,
+                                        boolean usarAnd) {
         
         ListaEnlazada<Cancion> todas = listarTodas();
 
@@ -112,6 +184,5 @@ public class CancionService {
             4           
         );
     }
-
 }
 

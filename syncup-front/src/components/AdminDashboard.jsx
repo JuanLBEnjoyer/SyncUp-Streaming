@@ -1,27 +1,68 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import API from "../services/api";
 import CancionesAdmin from "./CancionesAdmin";
-import UsuariosAdmin from "./UsuarioAdmin";
+import UsuarioAdmin from "./UsuarioAdmin";
+import CargaMasivaAdmin from "./CargaMasivaAdmin";
 
-export default function AdminDashboard({ currentView, user }) {
+export default function AdminDashboard({ currentView, setCurrentView, user }) {
   const renderContent = () => {
     switch (currentView) {
       case "dashboard":
-        return <DashboardView user={user} />;
+        return <DashboardView user={user} setCurrentView={setCurrentView} />;
       case "canciones":
         return <CancionesAdmin />;
       case "usuarios":
-        return <UsuariosAdmin />;
+        return <UsuarioAdmin />;
       case "carga-masiva":
-        return <CargaMasivaView />;
+        return <CargaMasivaAdmin />;
       default:
-        return <DashboardView user={user} />;
+        return <DashboardView user={user} setCurrentView={setCurrentView} />;
     }
   };
-
   return <div className="dashboard-container admin">{renderContent()}</div>;
 }
 
-function DashboardView({ user }) {
+function DashboardView({ user, setCurrentView }) {
+  const [stats, setStats] = useState({
+    totalUsuarios: 0,
+    totalCanciones: 0,
+    favoritosTotales: 0,
+    actividad: 100
+  });
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    cargarEstadisticas();
+  }, []);
+
+  const cargarEstadisticas = async () => {
+    try {
+      setLoading(true);
+      
+      const { data: infoData } = await API.get("/admin/info");
+      
+      const { data: usuariosData } = await API.get("/admin/usuarios");
+      
+      let favoritosTotales = 0;
+      if (usuariosData.usuarios) {
+        usuariosData.usuarios.forEach(usuario => {
+          favoritosTotales += usuario.totalFavoritos || 0;
+        });
+      }
+
+      setStats({
+        totalUsuarios: infoData.totalUsuarios || 0,
+        totalCanciones: infoData.totalCanciones || 0,
+        favoritosTotales: favoritosTotales,
+        actividad: 100
+      });
+    } catch (error) {
+      console.error("Error al cargar estadísticas:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="dashboard-view">
       <div className="view-header admin-header">
@@ -34,7 +75,9 @@ function DashboardView({ user }) {
           <div className="stat-icon">👥</div>
           <div className="stat-content">
             <h3>Total Usuarios</h3>
-            <p className="stat-number">0</p>
+            <p className="stat-number">
+              {loading ? "..." : stats.totalUsuarios}
+            </p>
           </div>
         </div>
 
@@ -42,7 +85,9 @@ function DashboardView({ user }) {
           <div className="stat-icon">🎵</div>
           <div className="stat-content">
             <h3>Total Canciones</h3>
-            <p className="stat-number">0</p>
+            <p className="stat-number">
+              {loading ? "..." : stats.totalCanciones}
+            </p>
           </div>
         </div>
 
@@ -50,7 +95,9 @@ function DashboardView({ user }) {
           <div className="stat-icon">❤️</div>
           <div className="stat-content">
             <h3>Favoritos Totales</h3>
-            <p className="stat-number">0</p>
+            <p className="stat-number">
+              {loading ? "..." : stats.favoritosTotales}
+            </p>
           </div>
         </div>
 
@@ -58,7 +105,7 @@ function DashboardView({ user }) {
           <div className="stat-icon">📈</div>
           <div className="stat-content">
             <h3>Actividad</h3>
-            <p className="stat-number">100%</p>
+            <p className="stat-number">{stats.actividad}%</p>
           </div>
         </div>
       </div>
@@ -68,47 +115,36 @@ function DashboardView({ user }) {
           <div className="card-icon">🎵</div>
           <h3>Gestionar Canciones</h3>
           <p>Agregar, editar o eliminar canciones del catálogo</p>
-          <button className="card-button">Ir a Canciones</button>
+          <button 
+            className="card-button"
+            onClick={() => setCurrentView("canciones")}
+          >
+            Ir a Canciones
+          </button>
         </div>
 
         <div className="dashboard-card admin-card">
           <div className="card-icon">👥</div>
           <h3>Gestionar Usuarios</h3>
           <p>Administrar cuentas de usuarios</p>
-          <button className="card-button">Ir a Usuarios</button>
+          <button 
+            className="card-button"
+            onClick={() => setCurrentView("usuarios")}
+          >
+            Ir a Usuarios
+          </button>
         </div>
 
         <div className="dashboard-card admin-card">
           <div className="card-icon">📤</div>
           <h3>Carga Masiva</h3>
           <p>Importar canciones desde archivo</p>
-          <button className="card-button">Cargar Archivo</button>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function CargaMasivaView() {
-  return (
-    <div className="dashboard-view">
-      <div className="view-header">
-        <h1>Carga Masiva 📤</h1>
-        <p>Importar canciones desde archivo CSV o TXT</p>
-      </div>
-
-      <div className="upload-section">
-        <div className="upload-card">
-          <div className="upload-icon">📁</div>
-          <h3>Arrastra un archivo aquí</h3>
-          <p>o haz clic para seleccionar</p>
-          <button className="btn-primary">Seleccionar Archivo</button>
-          
-          <div className="upload-info">
-            <p><strong>Formato esperado:</strong></p>
-            <code>titulo,artista,genero,año,duracion</code>
-            <p><strong>Géneros válidos:</strong> ROCK, POP, ELECTRONICA, HIPHOP, SALSA, REGGAETON</p>
-          </div>
+          <button 
+            className="card-button"
+            onClick={() => setCurrentView("carga-masiva")}
+          >
+            Cargar Archivo
+          </button>
         </div>
       </div>
     </div>
