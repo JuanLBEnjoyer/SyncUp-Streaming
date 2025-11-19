@@ -4,12 +4,14 @@ import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
 import UserDashboard from "../components/UserDashboard";
 import AdminDashboard from "../components/AdminDashboard";
+import PerfilUsuario from "../components/PerfilUsuario";
 import "../styles/Home.css";
 
 export default function Home({ user, setUser }) {
   const nav = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [currentView, setCurrentView] = useState("inicio");
+  const [perfilOpen, setPerfilOpen] = useState(false);
 
   useEffect(() => {
     if (!user) {
@@ -50,6 +52,7 @@ export default function Home({ user, setUser }) {
         user={user} 
         onLogout={handleLogout}
         onToggleSidebar={toggleSidebar}
+        onOpenPerfil={() => setPerfilOpen(true)}
       />
 
       <div className="home-content">
@@ -76,6 +79,14 @@ export default function Home({ user, setUser }) {
           )}
         </main>
       </div>
+
+      {perfilOpen && (
+        <PerfilUsuario 
+          user={user} 
+          setUser={setUser} 
+          onClose={() => setPerfilOpen(false)} 
+        />
+      )}
     </div>
   );
 }

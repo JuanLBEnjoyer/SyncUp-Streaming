@@ -1,10 +1,15 @@
 import React, { useState } from "react";
 
-export default function Navbar({ user, onLogout, onToggleSidebar }) {
+export default function Navbar({ user, onLogout, onToggleSidebar, onOpenPerfil }) {
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
   const toggleDropdown = () => {
     setDropdownOpen(!dropdownOpen);
+  };
+
+  const handlePerfilClick = () => {
+    setDropdownOpen(false);
+    onOpenPerfil();
   };
 
   return (
@@ -31,7 +36,7 @@ export default function Navbar({ user, onLogout, onToggleSidebar }) {
       <div className="navbar-user">
         <div className="user-info" onClick={toggleDropdown}>
           <div className="user-avatar">
-            {user.nombre.charAt(0).toUpperCase()}
+            {user.nombre?.charAt(0).toUpperCase() || "U"}
           </div>
           <div className="user-details">
             <span className="user-name">{user.nombre}</span>
@@ -46,11 +51,8 @@ export default function Navbar({ user, onLogout, onToggleSidebar }) {
               <p className="dropdown-email">{user.nombre}</p>
             </div>
             <div className="dropdown-divider"></div>
-            <button className="dropdown-item" onClick={() => alert('Perfil - Próximamente')}>
+            <button className="dropdown-item" onClick={handlePerfilClick}>
               <span>👤</span> Mi Perfil
-            </button>
-            <button className="dropdown-item" onClick={() => alert('Configuración - Próximamente')}>
-              <span>⚙️</span> Configuración
             </button>
             <div className="dropdown-divider"></div>
             <button className="dropdown-item logout" onClick={onLogout}>
