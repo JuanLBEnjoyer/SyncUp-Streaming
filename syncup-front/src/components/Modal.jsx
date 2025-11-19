@@ -36,7 +36,6 @@ export default function Modal({ isOpen, onClose, title, children, size = "medium
   return (
     <div className="modal-overlay" onClick={handleBackdropClick}>
       <div className={`modal-content modal-${size}`}>
-        {/* Header */}
         <div className="modal-header">
           <h2>{title}</h2>
           <button className="modal-close" onClick={onClose}>
@@ -44,7 +43,6 @@ export default function Modal({ isOpen, onClose, title, children, size = "medium
           </button>
         </div>
 
-        {/* Body */}
         <div className="modal-body">{children}</div>
       </div>
     </div>

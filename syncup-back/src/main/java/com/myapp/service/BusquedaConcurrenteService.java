@@ -5,10 +5,6 @@ import com.myapp.model.Cancion;
 import com.myapp.model.enums.Genero;
 import org.springframework.stereotype.Service;
 
-/**
- * Servicio para búsqueda concurrente de canciones.
- * Cumple con RF-030: búsqueda avanzada usando hilos de ejecución.
- */
 @Service
 public class BusquedaConcurrenteService {
 
@@ -48,7 +44,6 @@ public class BusquedaConcurrenteService {
             }
         }
 
-        // Combinar resultados
         ListaEnlazada<Cancion> resultadoFinal = new ListaEnlazada<>();
         for (BuscadorThread thread : threads) {
             ListaEnlazada<Cancion> parcial = thread.getResultado();

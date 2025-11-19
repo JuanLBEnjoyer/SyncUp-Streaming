@@ -17,7 +17,6 @@ body {
   min-height: 100vh;
 }
 
-/* ===== VARIABLES ===== */
 :root {
   --primary: #8B5CF6;
   --primary-dark: #7C3AED;
@@ -31,7 +30,6 @@ body {
   --border: rgba(139, 92, 246, 0.2);
 }
 
-/* ===== ANIMACIONES ===== */
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -63,7 +61,6 @@ body {
   }
 }
 
-/* ===== CONTENEDOR AUTH ===== */
 .auth-container {
   min-height: 100vh;
   display: flex;
@@ -85,7 +82,6 @@ body {
   animation: pulse 8s ease-in-out infinite;
 }
 
-/* ===== TARJETA AUTH ===== */
 .auth-card {
   background: var(--bg-card);
   backdrop-filter: blur(20px);
@@ -100,7 +96,6 @@ body {
   z-index: 1;
 }
 
-/* ===== LOGO Y HEADER ===== */
 .auth-logo {
   text-align: center;
   margin-bottom: 2rem;
@@ -129,7 +124,6 @@ body {
   font-size: 0.95rem;
 }
 
-/* ===== FORMULARIO ===== */
 .auth-form {
   display: flex;
   flex-direction: column;
@@ -171,7 +165,6 @@ body {
   color: var(--text-secondary);
 }
 
-/* ===== MENSAJES DE ERROR ===== */
 .form-error {
   color: var(--error);
   font-size: 0.85rem;
@@ -193,7 +186,6 @@ body {
   background: rgba(239, 68, 68, 0.05);
 }
 
-/* ===== ALERTA GENERAL ===== */
 .alert {
   padding: 1rem 1.25rem;
   border-radius: 12px;

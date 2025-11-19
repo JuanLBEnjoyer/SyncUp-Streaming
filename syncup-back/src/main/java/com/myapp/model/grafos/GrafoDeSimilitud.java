@@ -7,18 +7,6 @@ import com.myapp.ClasesPropias.Map.HashMapSimple;
 import com.myapp.ClasesPropias.ListaEnlazada.ListaEnlazada;
 import com.myapp.ClasesPropias.Set.SetPropio;
 
-
-/**
- * Grafo de similitud:
- * - Ponderado
- * - No dirigido
- * - Usa solo estructuras propias (MapSimple, ListaEnlazada, SetPropio)
- * 
- * Requisitos que cumple:
- *  RF-019: Cancion funciona como nodo del grafo.
- *  RF-021: Grafo Ponderado No Dirigido.
- *  RF-022: Soporta Dijkstra para rutas de menor costo (mayor similitud).
- */
 public class GrafoDeSimilitud {
 
     private final MapSimple<Long, Cancion> canciones;

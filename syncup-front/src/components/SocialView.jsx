@@ -12,7 +12,6 @@ export default function SocialView({ user }) {
   const [error, setError] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
 
-  // Cargar datos al montar y cuando cambia el tab
   useEffect(() => {
     const cargarDatos = async () => {
       try {
@@ -29,7 +28,6 @@ export default function SocialView({ user }) {
         setSeguidos(seguidosRes.data.seguidos || []);
         setSeguidores(seguidoresRes.data.seguidores || []);
         setSugerencias(sugerenciasRes.data.sugerencias || []);
-        // Filtrar el usuario actual y al admin de la lista
         setTodosUsuarios(
           (todosRes.data.usuarios || []).filter(u => 
             u.user !== user.user && u.role !== "ADMIN"
@@ -46,7 +44,6 @@ export default function SocialView({ user }) {
     cargarDatos();
   }, [user.user]);
 
-  // Función para recargar datos (usada por otros componentes)
   const recargarDatos = async () => {
     try {
       setLoading(true);
@@ -75,11 +72,9 @@ export default function SocialView({ user }) {
     }
   };
 
-  // Seguir usuario
   const seguirUsuario = async (username) => {
     try {
       await API.post(`/usuarios/${user.user}/seguir/${username}`);
-      // Recargar datos
       await recargarDatos();
     } catch (err) {
       console.error("Error al seguir usuario:", err);
@@ -87,11 +82,9 @@ export default function SocialView({ user }) {
     }
   };
 
-  // Dejar de seguir
   const dejarDeSeguir = async (username) => {
     try {
       await API.delete(`/usuarios/${user.user}/seguir/${username}`);
-      // Recargar datos
       await recargarDatos();
     } catch (err) {
       console.error("Error al dejar de seguir:", err);
@@ -99,18 +92,15 @@ export default function SocialView({ user }) {
     }
   };
 
-  // Verificar si ya sigo a un usuario
   const yaSigo = (username) => {
     return seguidos.some(s => s.user === username);
   };
 
-  // Filtrar usuarios para búsqueda
   const usuariosFiltrados = todosUsuarios.filter(u =>
     u.user.toLowerCase().includes(searchTerm.toLowerCase()) ||
     u.nombre.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  // Renderizar lista de usuarios
   const renderUsuarioCard = (usuario, showFollowButton = true) => (
     <div key={usuario.user} className="usuario-card">
       <div className="usuario-avatar">
@@ -149,7 +139,6 @@ export default function SocialView({ user }) {
         <p>Conecta con otros usuarios</p>
       </div>
 
-      {/* Estadísticas */}
       <div className="social-stats">
         <div className="stat-box">
           <span className="stat-number">{seguidos.length}</span>
@@ -161,7 +150,6 @@ export default function SocialView({ user }) {
         </div>
       </div>
 
-      {/* Tabs */}
       <div className="social-tabs">
         <button
           className={`tab-button ${activeTab === "seguidos" ? "active" : ""}`}
@@ -205,7 +193,6 @@ export default function SocialView({ user }) {
         </div>
       ) : (
         <div className="social-content">
-          {/* Tab: Seguidos */}
           {activeTab === "seguidos" && (
             <div className="usuarios-list">
               {seguidos.length === 0 ? (
@@ -225,7 +212,6 @@ export default function SocialView({ user }) {
             </div>
           )}
 
-          {/* Tab: Seguidores */}
           {activeTab === "seguidores" && (
             <div className="usuarios-list">
               {seguidores.length === 0 ? (
@@ -239,7 +225,6 @@ export default function SocialView({ user }) {
             </div>
           )}
 
-          {/* Tab: Sugerencias */}
           {activeTab === "sugerencias" && (
             <div className="usuarios-list">
               {sugerencias.length === 0 ? (
@@ -259,7 +244,6 @@ export default function SocialView({ user }) {
             </div>
           )}
 
-          {/* Tab: Buscar */}
           {activeTab === "buscar" && (
             <div className="buscar-section">
               <div className="search-box">

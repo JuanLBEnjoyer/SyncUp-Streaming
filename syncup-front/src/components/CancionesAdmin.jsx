@@ -346,7 +346,7 @@ function CancionForm({ mode, cancion, onSave, onCancel, generos }) {
             id="anio"
             name="anio"
             type="number"
-            placeholder="2024"
+            placeholder="ej: 2024"
             value={formData.anio}
             onChange={handleChange}
             disabled={loading}

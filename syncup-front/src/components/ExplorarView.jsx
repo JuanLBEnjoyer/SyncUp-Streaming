@@ -8,13 +8,11 @@ export default function ExplorarView({ user }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  // Estado para búsqueda
   const [searchTerm, setSearchTerm] = useState("");
   const [sugerencias, setSugerencias] = useState([]);
   const [mostrarSugerencias, setMostrarSugerencias] = useState(false);
-  const [todasLasCanciones, setTodasLasCanciones] = useState([]); // Guardamos todas para filtrar
+  const [todasLasCanciones, setTodasLasCanciones] = useState([]); 
 
-  // Estado para búsqueda avanzada
   const [mostrarAvanzada, setMostrarAvanzada] = useState(false);
   const [filtros, setFiltros] = useState({
     artista: "",
@@ -30,14 +28,13 @@ export default function ExplorarView({ user }) {
       setLoading(true);
       setError("");
 
-      // Cargar canciones y favoritos en paralelo
       const [cancionesRes, favoritosRes] = await Promise.all([
         API.get("/canciones"),
         API.get(`/usuarios/${user.user}/favoritos`)
       ]);
 
       setCanciones(cancionesRes.data);
-      setTodasLasCanciones(cancionesRes.data); // Guardamos copia de todas
+      setTodasLasCanciones(cancionesRes.data); 
       setFavoritos(favoritosRes.data.map(f => f.id));
     } catch (err) {
       setError("Error al cargar las canciones");
@@ -52,14 +49,12 @@ export default function ExplorarView({ user }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Autocompletado
   const handleSearchChange = async (e) => {
     const value = e.target.value;
     setSearchTerm(value);
 
     if (value.length >= 2) {
       try {
-        // Buscar con el valor en minúsculas para el backend
         const { data } = await API.get(`/canciones/autocompletar?prefijo=${value.toLowerCase()}&limite=5`);
         setSugerencias(data);
         setMostrarSugerencias(true);
@@ -79,7 +74,6 @@ export default function ExplorarView({ user }) {
     buscarPorTitulo(sugerencia);
   };
 
-  // Búsqueda por título (filtra localmente)
   const buscarPorTitulo = (titulo) => {
     if (!titulo.trim()) {
       setCanciones(todasLasCanciones);
@@ -91,14 +85,12 @@ export default function ExplorarView({ user }) {
     setCanciones(resultado);
   };
 
-  // Ver todas las canciones
   const verTodas = () => {
     setSearchTerm("");
     setSugerencias([]);
     setCanciones(todasLasCanciones);
   };
 
-  // Búsqueda avanzada
   const handleBusquedaAvanzada = async () => {
     try {
       setLoading(true);
@@ -120,7 +112,6 @@ export default function ExplorarView({ user }) {
     }
   };
 
-  // Limpiar filtros
   const limpiarFiltros = () => {
     setSearchTerm("");
     setFiltros({ artista: "", genero: "", año: "", modo: "AND" });
@@ -128,7 +119,6 @@ export default function ExplorarView({ user }) {
     setCanciones(todasLasCanciones);
   };
 
-  // Agregar/quitar favorito
   const toggleFavorito = async (cancionId) => {
     try {
       const esFavorito = favoritos.includes(cancionId);
@@ -146,7 +136,6 @@ export default function ExplorarView({ user }) {
     }
   };
 
-  // Formatear duración
   const formatDuracion = (segundos) => {
     const min = Math.floor(segundos / 60);
     const seg = Math.floor(segundos % 60);
@@ -160,7 +149,6 @@ export default function ExplorarView({ user }) {
         <p>Busca y descubre nuevas canciones</p>
       </div>
 
-      {/* Barra de búsqueda con autocompletado */}
       <div className="search-section">
         <div className="search-container">
           <div className="search-input-wrapper">
@@ -203,7 +191,6 @@ export default function ExplorarView({ user }) {
           </button>
         </div>
 
-        {/* Búsqueda avanzada */}
         {mostrarAvanzada && (
           <div className="busqueda-avanzada">
             <div className="filtros-grid">
@@ -260,7 +247,6 @@ export default function ExplorarView({ user }) {
         )}
       </div>
 
-      {/* Mensajes de error */}
       {error && (
         <div className="alert alert-error">
           <span>⚠️</span>
@@ -268,7 +254,6 @@ export default function ExplorarView({ user }) {
         </div>
       )}
 
-      {/* Lista de canciones */}
       {loading ? (
         <div className="loading-state">
           <div className="spinner"></div>
@@ -309,7 +294,6 @@ export default function ExplorarView({ user }) {
         </div>
       )}
 
-      {/* Contador de resultados */}
       {!loading && canciones.length > 0 && (
         <div className="resultados-count">
           Mostrando {canciones.length} canción{canciones.length !== 1 ? 'es' : ''}

@@ -24,7 +24,6 @@ export default function PerfilUsuario({ user, setUser, onClose }) {
     setError("");
     setSuccess("");
 
-    // Validaciones
     if (!form.nombre.trim()) {
       setError("El nombre no puede estar vacío");
       return;
@@ -47,14 +46,12 @@ export default function PerfilUsuario({ user, setUser, onClose }) {
         nombre: form.nombre
       };
 
-      // Solo enviar contraseña si se quiere cambiar
       if (form.password) {
         payload.password = form.password;
       }
 
       const { data } = await API.put(`/usuarios/${user.user}/perfil`, payload);
 
-      // Actualizar usuario en localStorage y estado
       const updatedUser = {
         ...user,
         nombre: data.usuario.nombre

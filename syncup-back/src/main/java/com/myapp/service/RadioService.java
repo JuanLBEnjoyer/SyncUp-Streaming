@@ -6,12 +6,6 @@ import com.myapp.ClasesPropias.Set.SetPropio;
 import com.myapp.ClasesPropias.Iterador.IteradorPropio;
 import com.myapp.model.Cancion;
 
-/**
- * RF-006: Generar una "Radio" a partir de una canción.
- * 
- * Usa el GrafoDeSimilitud para recorrer canciones similares (BFS),
- * construyendo una cola de reproducción.
- */
 @Service
 public class RadioService {
 

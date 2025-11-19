@@ -49,8 +49,6 @@ public class CancionController {
         }
     }
 
-    // --------- OBTENER UNA CANCIÓN ---------
-
     @GetMapping("/{id}")
     public ResponseEntity<?> obtener(@PathVariable Long id) {
         Cancion c = cancionService.obtener(id);
