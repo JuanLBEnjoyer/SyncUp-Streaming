@@ -1,5 +1,9 @@
 import React from "react";
 import ExplorarView from "./ExplorarView";
+import FavoritosView from "./FavoritosView";
+import DescubrimientoView from "./DescubrimientoView";
+import RadioView from "./RadioView";
+import SocialView from "./SocialView";
 
 export default function UserDashboard({ currentView, setCurrentView, user }) {
   const renderContent = () => {
@@ -9,11 +13,11 @@ export default function UserDashboard({ currentView, setCurrentView, user }) {
       case "explorar":
         return <ExplorarView user={user} />;
       case "favoritos":
-        return <FavoritosView user={user} />;
+        return <FavoritosView user={user} setCurrentView={setCurrentView} />;
       case "descubrimiento":
-        return <DescubrimientoView user={user} />;
+        return <DescubrimientoView user={user} setCurrentView={setCurrentView} />;
       case "radio":
-        return <RadioView />;
+        return <RadioView user={user} setCurrentView={setCurrentView} />;
       case "social":
         return <SocialView user={user} />;
       default:
@@ -94,79 +98,6 @@ function InicioView({ user, setCurrentView }) {
             Explorar Música
           </button>
         </div>
-      </div>
-    </div>
-  );
-}
-
-function FavoritosView({ user }) {
-  return (
-    <div className="dashboard-view">
-      <div className="view-header">
-        <h1>Mis Favoritos ❤️</h1>
-        <p>Tus canciones guardadas</p>
-      </div>
-
-      <div className="empty-state">
-        <span className="empty-icon">💔</span>
-        <p>Aún no tienes canciones favoritas</p>
-        <button className="btn-secondary">Explorar Música</button>
-      </div>
-    </div>
-  );
-}
-
-function DescubrimientoView({ user }) {
-  return (
-    <div className="dashboard-view">
-      <div className="view-header">
-        <h1>Descubrimiento Semanal ✨</h1>
-        <p>Recomendaciones basadas en tus gustos</p>
-      </div>
-
-      <div className="empty-state">
-        <span className="empty-icon">🎲</span>
-        <p>Agrega canciones a favoritos para recibir recomendaciones personalizadas</p>
-        <button className="btn-secondary">Explorar Música</button>
-      </div>
-    </div>
-  );
-}
-
-function RadioView() {
-  return (
-    <div className="dashboard-view">
-      <div className="view-header">
-        <h1>Radio 📻</h1>
-        <p>Genera una radio basada en una canción</p>
-      </div>
-
-      <div className="empty-state">
-        <span className="empty-icon">📻</span>
-        <p>Selecciona una canción para iniciar tu radio personalizada</p>
-      </div>
-    </div>
-  );
-}
-
-function SocialView({ user }) {
-  return (
-    <div className="dashboard-view">
-      <div className="view-header">
-        <h1>Social 👥</h1>
-        <p>Conecta con otros usuarios</p>
-      </div>
-
-      <div className="social-tabs">
-        <button className="tab-button active">Seguidos</button>
-        <button className="tab-button">Seguidores</button>
-        <button className="tab-button">Sugerencias</button>
-      </div>
-
-      <div className="empty-state">
-        <span className="empty-icon">🤝</span>
-        <p>Aún no sigues a nadie</p>
-        <button className="btn-secondary">Buscar Usuarios</button>
       </div>
     </div>
   );

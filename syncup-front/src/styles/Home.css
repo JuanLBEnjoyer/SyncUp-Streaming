@@ -67,6 +67,10 @@
   -webkit-text-fill-color: transparent;
 }
 
+.navbar-spacer {
+  flex: 1;
+}
+
 .navbar-search {
   flex: 1;
   max-width: 500px;

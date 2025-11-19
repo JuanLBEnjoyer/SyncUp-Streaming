@@ -12,7 +12,7 @@ public class TrieAutocompletadoService {
 
     public void registrarTitulo(String titulo) {
         if (titulo == null || titulo.isBlank()) return;
-        trie.insertar(titulo.toLowerCase());
+        trie.insertar(titulo);
     }
 
     public ListaEnlazada<String> sugerir(String prefijo) {
@@ -23,6 +23,6 @@ public class TrieAutocompletadoService {
         if (prefijo == null || prefijo.isBlank() || limite <= 0) {
             return new ListaEnlazada<>();
         }
-        return trie.autocompletar(prefijo.toLowerCase(), limite);
+        return trie.autocompletar(prefijo, limite);
     }
 }

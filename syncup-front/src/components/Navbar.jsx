@@ -25,14 +25,7 @@ export default function Navbar({ user, onLogout, onToggleSidebar, onOpenPerfil }
         />
         <span className="navbar-title">SyncUp</span>
       </div>
-      <div className="navbar-search">
-        <input 
-          type="text" 
-          placeholder="Buscar canciones, artistas..." 
-          className="search-input"
-        />
-        <span className="search-icon">🔍</span>
-      </div>
+      <div className="navbar-spacer"></div>
       <div className="navbar-user">
         <div className="user-info" onClick={toggleDropdown}>
           <div className="user-avatar">
